@@ -141,3 +141,4 @@ vite.config.ts.timestamp-*
 # Python files for Backend
 .venv
 .python-version
+__pycache__
