@@ -1,0 +1,10 @@
+[project]
+name = "gass-poll-backend"
+version = "0.1.0"
+description = "Backend for Gass-Poll Scooter Rental Website"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "flask>=2.3.3",
+    "flask-restapi>=0.3.1",
+]
