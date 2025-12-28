@@ -8,4 +8,5 @@ dependencies = [
     "flask>=2.3.3",
     "flask-restful>=0.3.10",
     "pymongo>=4.15.5",
+    "python-dotenv>=1.2.1",
 ]
