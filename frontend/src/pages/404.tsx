@@ -30,8 +30,10 @@ export default function ErrorPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-orange-50 relative overflow-hidden font-poppins">
+      {/*Subtle Circle in the Background*/}
       <div className="absolute top-10 left-10 w-32 h-32 bg-orange-200 rounded-full blur-3xl opacity-60 animate-pulse"></div>
       <div className="absolute bottom-10 right-10 w-64 h-64 bg-amber-200 rounded-full blur-3xl opacity-60 mix-blend-multiply"></div>
+      {/*Subtle Circle in the Background*/}
 
       <div className="max-w-lg w-full bg-white/80 backdrop-blur-xl border border-orange-100 rounded-3xl shadow-2xl shadow-orange-500/10 p-8 md:p-12 text-center relative z-10">
         <div className="flex justify-center mb-8">
@@ -50,7 +52,7 @@ export default function ErrorPage() {
           {errorMessage}
           <br />
           <span className="text-xs text-orange-400 mt-2 block font-mono bg-orange-50 py-1 px-2 rounded-lg mx-auto w-fit border border-orange-100">
-            (Error Code: ID-10-T)
+            (Error Code: ERR-{errorStatus})
           </span>
         </p>
 
