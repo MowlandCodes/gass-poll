@@ -25,7 +25,7 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section id="how-it-works" className="py-20 bg-white scroll-mt-20">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <span className="text-orange-500 font-bold tracking-widest uppercase text-sm">

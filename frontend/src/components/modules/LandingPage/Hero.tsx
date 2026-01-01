@@ -9,6 +9,17 @@ export default function HeroSection() {
     "https://i.pravatar.cc/100?img=7",
   ];
 
+  const scrollTo = (id: string) => {
+    const element = document.getElementById(id);
+
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   return (
     <section className="relative py-20 lg:py-40 bg-orange-50/50 overflow-hidden">
       <div className="absolute top-0 right-0 -mr-32 -mt-32 w-125 h-125 bg-orange-200 rounded-full blur-3xl opacity-40 mix-blend-multiply animate-pulse"></div>
@@ -46,15 +57,16 @@ export default function HeroSection() {
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link to="/about" className="w-full sm:w-auto">
+              <div className="w-full sm:w-auto">
                 <Button
                   variant="secondary"
                   size="lg"
                   className="w-full text-lg border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer"
+                  onClick={() => scrollTo("how-it-works")}
                 >
                   Gimana Caranya?
                 </Button>
-              </Link>
+              </div>
             </div>
 
             <div className="mt-10 pt-8 border-t border-orange-100 flex items-center justify-center lg:justify-start gap-4 text-sm text-slate-500 font-medium">
