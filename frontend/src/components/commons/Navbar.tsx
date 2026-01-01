@@ -26,6 +26,7 @@ export default function Navbar() {
         }`}
     >
       <div className="container mx-auto px-6 h-20 flex justify-between items-center relative z-50 bg-inherit">
+        {/* Logo */}
         <Link
           to="/"
           className="flex items-center gap-2 group"
@@ -39,6 +40,7 @@ export default function Navbar() {
           </span>
         </Link>
 
+        {/* Nav links */}
         <div className="hidden md:flex items-center space-x-8 font-medium text-slate-600">
           <Link to="/" className="hover:text-orange-500 transition-colors">
             Beranda
@@ -54,6 +56,7 @@ export default function Navbar() {
           </Link>
         </div>
 
+        {/* CTA */}
         <div className="hidden md:flex items-center gap-4">
           <Link to="/login">
             <Button variant="ghost" size="md">
