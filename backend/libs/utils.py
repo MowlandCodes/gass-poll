@@ -1,7 +1,6 @@
 from bson import ObjectId
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, current_app
 from libs.connection import db
-from libs.utils import serialize_doc
 import bcrypt
 import jwt
 import functools
@@ -31,21 +30,21 @@ def token_required(f):
             token = request.headers['Authorization'].split(" ")[1]
 
         if not token:
-            return jsonify({'message': 'Token is missing!'}), 401
+            return {'message': 'Token is missing!'}, 401
         
         try:
             data=jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
             current_user = db.users.find_one({'_id': ObjectId(data['user_id'])})
 
             if not current_user:
-                return jsonify({'message': 'User not found!'}), 401
+                return {'message': 'User not found!'}, 401
             
         except jwt.ExpiredSignatureError:
-            return jsonify({'message': 'Token has expired!'}), 401
+            return {'message': 'Token has expired!'}, 401
         except jwt.InvalidTokenError:
-            return jsonify({'message': 'Invalid token!'}), 401
-        except jwt as e:
-            return jsonify({'message': 'Token is invalid!', 'error': str(e)}), 401
+            return {'message': 'Invalid token!'}, 401
+        except Exception as e:
+            return {'message': 'Token is invalid!', 'error': str(e)}, 401
         
 
         return f(current_user, *args, **kwargs)
