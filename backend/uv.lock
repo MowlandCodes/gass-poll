@@ -256,7 +256,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "argon2-cffi", specifier = ">=25.1.0" },
-    { name = "bcrypt" },
+    { name = "bcrypt", specifier = ">=5.0.0" },
     { name = "flask", specifier = ">=2.3.3" },
     { name = "flask-restful", specifier = ">=0.3.10" },
     { name = "pyjwt", specifier = ">=2.10.1" },
