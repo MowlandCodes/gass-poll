@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "@/components/commons/Navbar";
+import Footer from "@/components/commons/Footer";
 
 export default function MainLayout() {
   return (
@@ -8,6 +9,7 @@ export default function MainLayout() {
       <main className="grow pt-20">
         <Outlet />
       </main>
+      <Footer />
     </div>
   );
 }
