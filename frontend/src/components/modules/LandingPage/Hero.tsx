@@ -84,10 +84,10 @@ export default function HeroSection() {
               <div className="relative rounded-[3rem] rounded-br-[5rem] border-4 border-white shadow-2xl shadow-orange-500/20 overflow-hidden -rotate-3 bg-white">
                 <img
                   src={
-                    "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=1000&auto=format&fit=crop"
+                    "https://images.unsplash.com/photo-1636428818733-acdee12591e4?q=80&w=627&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                   }
                   alt="Mahasiswa Naik Motor"
-                  className="w-full h-full object-cover object-center scale-110 hover:scale-100 transition-transform duration-700"
+                  className="w-full h-80 object-cover object-center scale-110 hover:scale-100 transition-transform duration-700"
                 />
               </div>
 
