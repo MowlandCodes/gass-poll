@@ -1,6 +1,8 @@
 from os import getenv
-
+from dotenv import load_dotenv
 from pymongo import MongoClient
+
+load_dotenv()
 
 DB_USER = getenv("DB_USER", "user")
 DB_PASSWORD = getenv("DB_PASSWORD", "password")
