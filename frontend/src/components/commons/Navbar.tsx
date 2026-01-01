@@ -22,7 +22,7 @@ export default function Navbar() {
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
         scrolled || isMobileMenuOpen
-          ? "bg-white/90 backdrop-blur-md shadow-lg"
+          ? "bg-white backdrop-blur-md shadow-lg"
           : "bg-transparent"
       }`}
     >
