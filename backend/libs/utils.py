@@ -1,5 +1,5 @@
 from bson import ObjectId
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, current_app
 from libs.connection import db
 import bcrypt
 import jwt
