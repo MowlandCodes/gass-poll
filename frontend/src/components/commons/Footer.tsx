@@ -19,7 +19,7 @@ export default function Footer() {
 
         <div className="text-sm text-slate-500 flex items-center justify-center gap-1 font-mono">
           © {new Date().getFullYear()} Created by
-          <strong>DiBuffDoaOrtu</strong> Team
+          <strong> DiBuffDoaOrtu</strong> Team
         </div>
       </div>
     </footer>
