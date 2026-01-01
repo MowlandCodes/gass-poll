@@ -26,7 +26,7 @@ export default function Navbar() {
           : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto px-6 h-20 flex justify-between items-center relative z-50 bg-inherit">
+      <div className="container mx-auto px-6 h-20 flex justify-between items-center relative z-50">
         {/* Logo */}
         <Link
           to="/"
