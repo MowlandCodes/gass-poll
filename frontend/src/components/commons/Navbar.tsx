@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Motorbike } from "lucide-react";
+import { Motorbike, LogIn } from "lucide-react";
+import Button from "@/components/commons/Button";
 
 export default function Navbar() {
   return (
@@ -30,18 +31,21 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-4">
-          {/*
-      <Link to="/login">
-      <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
-        Masuk
-      </Button>
-      </Link>
-      <Link to="/register">
-      <Button variant="primary" size="sm" className="flex items-center gap-2">
-        Daftar
-        <LogIn size={16} />
-      </Button>
-      </Link>*/}
+          <Link to="/login">
+            <Button variant="ghost" size="md" className="hidden sm:inline-flex">
+              Masuk
+            </Button>
+          </Link>
+          <Link to="/register">
+            <Button
+              variant="primary"
+              size="md"
+              className="flex items-center gap-2"
+            >
+              Daftar
+              <LogIn size={16} />
+            </Button>
+          </Link>
         </div>
       </div>
     </nav>
