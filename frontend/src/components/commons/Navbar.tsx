@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Bike, LogIn, Menu, X } from "lucide-react";
+import { Motorbike, LogIn, Menu, X } from "lucide-react";
 import Button from "@/components/commons/Button";
 
 export default function Navbar() {
@@ -20,10 +20,11 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${scrolled || isMobileMenuOpen
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+        scrolled || isMobileMenuOpen
           ? "bg-white/90 backdrop-blur-md shadow-lg"
           : "bg-transparent"
-        }`}
+      }`}
     >
       <div className="container mx-auto px-6 h-20 flex justify-between items-center relative z-50 bg-inherit">
         {/* Logo */}
@@ -33,7 +34,7 @@ export default function Navbar() {
           onClick={closeMenu}
         >
           <div className="bg-orange-500 p-2 rounded-lg text-white transform group-hover:rotate-12 transition-transform duration-300 shadow-lg shadow-orange-500/20">
-            <Bike size={24} strokeWidth={2.5} />
+            <Motorbike size={24} strokeWidth={2.5} />
           </div>
           <span className="text-2xl font-black text-slate-800 tracking-tighter">
             GASS<span className="text-orange-500">POLL</span>
@@ -87,10 +88,11 @@ export default function Navbar() {
 
       <div
         className={`absolute top-full left-0 w-full bg-white border-b border-orange-100 shadow-xl flex flex-col p-6 gap-4
-    md:hidden -z-10 transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) ${isMobileMenuOpen
-            ? "translate-y-0 opacity-100"
-            : "-translate-y-10 opacity-0 pointer-events-none"
-          }`}
+    md:hidden -z-10 transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) ${
+      isMobileMenuOpen
+        ? "translate-y-0 opacity-100"
+        : "-translate-y-10 opacity-0 pointer-events-none"
+    }`}
       >
         <Link
           to="/"
