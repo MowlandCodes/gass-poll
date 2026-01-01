@@ -10,7 +10,7 @@ export default function HeroSection() {
   ];
 
   return (
-    <section className="relative py-20 lg:py-28 bg-orange-50/50 overflow-hidden">
+    <section className="relative py-20 lg:py-40 bg-orange-50/50 overflow-hidden">
       <div className="absolute top-0 right-0 -mr-32 -mt-32 w-125 h-125 bg-orange-200 rounded-full blur-3xl opacity-40 mix-blend-multiply animate-pulse"></div>
       <div className="absolute bottom-0 left-10 w-75 h-75 bg-amber-200 rounded-full blur-3xl opacity-40 mix-blend-multiply"></div>
 
