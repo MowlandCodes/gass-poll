@@ -1,12 +1,10 @@
 from libs.connection import db
 
 
-def validate_register(
-    username: str, password: str, phone_number: str, email: str
-) -> bool:
+def validate_register(username: str, password: str, email: str) -> bool:
     """Validate user registration input"""
     ## Validate name must be alphabetic
-    if not username.isalpha():
+    if not username.isascii() and len(username) > 3:
         return False
 
     ## Validate the password must more than 8 characters

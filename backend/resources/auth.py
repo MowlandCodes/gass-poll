@@ -25,7 +25,7 @@ class register(Resource):
 
         email: str = data.get("email")
 
-        is_valid = validate_register(username, password, phone_number, email)
+        is_valid = validate_register(username, password, email)
 
         if not is_valid:
             return {"message": "Bad Request"}, 400
