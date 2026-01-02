@@ -15,7 +15,7 @@ class MotorList(Resource):
     
     ## Add a new motor
     @token_required
-    def post(self, current_user):
+    def post(self):
         data = request.get_json()
         
         new_motor = {
