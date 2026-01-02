@@ -6,7 +6,7 @@ import jwt
 from flask import Blueprint, current_app, request
 from flask_restful import Api, Resource
 
-from helpers.auth import validate_register
+from helpers.auth import format_phone_number, validate_register
 from libs.connection import db
 
 auth_bp = Blueprint("auth", __name__)
@@ -19,7 +19,10 @@ class register(Resource):
 
         username: str = data.get("name")
         password: str = data.get("password")
+
         phone_number: str = data.get("phone_number")
+        phone_number = format_phone_number(phone_number)
+
         email: str = data.get("email")
 
         is_valid = validate_register(username, password, phone_number, email)

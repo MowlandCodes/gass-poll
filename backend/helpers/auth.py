@@ -13,10 +13,6 @@ def validate_register(
     if len(password) < 8:
         return False
 
-    ## Validate phone number
-    if phone_number.startswith("+62"):
-        return False
-
     ## Validate email and password
     if not email or not password:
         return False
@@ -26,3 +22,13 @@ def validate_register(
         return False
 
     return True
+
+
+def format_phone_number(phone_number: str) -> str:
+    if phone_number.startswith("+") and not phone_number.startswith("08"):
+        return phone_number
+
+    if phone_number.startswith("08"):
+        return f"+62{phone_number[2:]}"
+
+    return f"+62{phone_number}"
