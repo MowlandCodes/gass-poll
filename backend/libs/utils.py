@@ -47,7 +47,7 @@ def token_required(f):
             return {'message': 'Token is invalid!', 'error': str(e)}, 401
         
 
-        return f(current_user, *args, **kwargs)
+        return f(*args, current_user, **kwargs)
     
     return decorated
 
