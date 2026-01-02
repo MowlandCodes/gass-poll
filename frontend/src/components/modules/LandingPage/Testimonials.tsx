@@ -17,7 +17,7 @@ export default function Testimonials() {
     {
       name: "Yanto Laju Prima",
       role: "Anak TI",
-      text: "Security sistemnya bagus, gua coba SQL Injection di form booking gak tembus. Approved!",
+      text: "Security sistemnya bagus, gua coba SQL Injection di form login gak tembus. Approved!",
       avatar: "https://i.pravatar.cc/150?img=3",
     },
   ];
