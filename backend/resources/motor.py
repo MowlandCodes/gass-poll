@@ -3,19 +3,20 @@ from flask_restful import Resource, Api
 from libs.connection import db
 from libs.utils import serialize_doc, token_required
 
-bp_motor = Blueprint('motor', __name__)
+bp_motor = Blueprint('motor', __name__, url_prefix='/motor')
 api_motor = Api(bp_motor)
 
 class MotorList(Resource):
 
     ## Get all motors
+    @token_required
     def get(self):
         motors = list(db.motor.find())
         return [serialize_doc(m) for m in motors], 200
     
     ## Add a new motor
     @token_required
-    def post(self, current_user):
+    def post(self):
         data = request.get_json()
         
         new_motor = {

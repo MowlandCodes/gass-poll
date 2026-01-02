@@ -48,24 +48,24 @@ class Rental(Resource):
                          'rental_bill_id': str(result.inserted_id),
                          'total_cost': total_cost
                          }, 201
-    @token_required
-    def get(self, user_id):
-        try:
-            rental_bill = db.rental_bills.find_one({'user_id': user_id})
-        except:
-            return {'message': 'Invalid rental bill User!'}, 400
-        
-        if not rental_bill:
-            return {'message': 'Rental bill not found!'}, 404
-        
-        return serialize_doc(rental_bill), 200
     
     @token_required
-    def get(self):
-        rental_bills = db.rental_bills.find({})
-        bills_list = [serialize_doc(bill) for bill in rental_bills]
-        return bills_list, 200
+    def get(self, user_id=None):
+        if user_id:
+            try:
+                rental_bill = db.rental_bills.find_one({'user_id': ObjectId(user_id)})
+            except:
+                return {'message': 'Invalid rental bill User!'}, 400
+            
+            if not rental_bill:
+                return {'message': 'Rental bill not found!'}, 404
+            
+            return serialize_doc(rental_bill), 200
+        else:
+            rental_bills = db.rental_bills.find({})
+            bills_list = [serialize_doc(bill) for bill in rental_bills]
+            return bills_list, 200
 
-rental_api.add_resource(Rental, '/', '/<string:user_id>')
+rental_api.add_resource(Rental, "/", '/<string:user_id>')
 
 

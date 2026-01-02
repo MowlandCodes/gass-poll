@@ -5,7 +5,7 @@ import bcrypt
 import jwt
 from datetime import datetime, timedelta
 
-auth_bp = Blueprint('auth', __name__)
+auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 api_auth = Api(auth_bp)
 
 class register(Resource):
@@ -28,6 +28,7 @@ class register(Resource):
             "password": hashed_password,
             "email": data["email"],
             "phone": data.get("phone_number"),
+            "role": "user"
         }
         
         db.users.insert_one(new_user)
@@ -43,6 +44,7 @@ class login(Resource):
         if user and bcrypt.checkpw(data['password'].encode('utf-8'), user['password']):
             token = jwt.encode({
                 'user_id': str(user['_id']),
+                "role": user['role'] if user.get('role') else 'user',
                 'exp': datetime.utcnow() + timedelta(hours=1)
             }, current_app.config['SECRET_KEY'], algorithm='HS256')
 
