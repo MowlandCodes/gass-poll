@@ -6,6 +6,7 @@ import bcrypt
 import jwt
 from flask import Blueprint, current_app, request
 from flask_restful import Api, Resource
+from flask_jwt_extended import create_access_token
 
 from helpers.auth import format_phone_number, validate_register, validate_login
 from libs.connection import db
@@ -62,15 +63,11 @@ class login(Resource):
         if user and bcrypt.checkpw(
             password.encode("utf-8"), user["password"]
         ):
-            payload = {
-                "user_id": str(user["_id"]),
-                "role": user["role"] if "role" in user else "user",
-                "exp": datetime.utcnow() + timedelta(hours=1),
-            }
-            token = jwt.encode(
-                payload, current_app.config["SECRET_KEY"], algorithm="HS256"
+            token = create_access_token(
+                identity=str(user["_id"]),
+                expires_delta=timedelta(hours=1),
             )
-            return {"token": token}, 200
+            return {"token": token, "message": "login successful"}, 200
         
         return {"message": "Invalid email or password"}, 401
 

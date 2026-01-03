@@ -9,6 +9,7 @@ dependencies = [
     "bcrypt>=5.0.0",
     "flask>=2.3.3",
     "flask-cors>=6.0.2",
+    "flask-jwt-extended>=4.7.1",
     "flask-restful>=0.3.10",
     "pyjwt>=2.10.1",
     "pymongo>=4.15.5",

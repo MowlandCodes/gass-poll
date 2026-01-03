@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
+from flask_jwt_extended import JWTManager
 load_dotenv()
 
 from resources.rental import bp_rental
@@ -19,6 +20,8 @@ app.register_blueprint(bp_rental, url_prefix='/rental')
 app.register_blueprint(bp_users, url_prefix='/users')
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(bp_motor, url_prefix='/motor')
+
+jwt = JWTManager(app)
 
 if __name__ == '__main__':
     print(f"Starting server on port {app.config['APP_PORT']}...")
