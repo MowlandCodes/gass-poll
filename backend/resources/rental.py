@@ -51,7 +51,7 @@ class Rental(Resource):
         }, 201
 
     @token_required
-    def get(self, user_id=None):
+    def get(self, current_user, user_id=None):
         if not user_id:
             try:
                 rental_bill = db.rental_bills.find_one({"user_id": ObjectId(user_id)})

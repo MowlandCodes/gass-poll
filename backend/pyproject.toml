@@ -8,6 +8,7 @@ dependencies = [
     "argon2-cffi>=25.1.0",
     "bcrypt>=5.0.0",
     "flask>=2.3.3",
+    "flask-cors>=6.0.2",
     "flask-restful>=0.3.10",
     "pyjwt>=2.10.1",
     "pymongo>=4.15.5",

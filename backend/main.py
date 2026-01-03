@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from flask_cors import CORS
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -11,6 +12,8 @@ from resources.motor import bp_motor
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('APP_SECRET_KEY')
 app.config['APP_PORT'] = int(os.getenv('APP_PORT', 5000))
+
+CORS(app)
 
 app.register_blueprint(bp_rental, url_prefix='/rental')
 app.register_blueprint(bp_users, url_prefix='/users')
