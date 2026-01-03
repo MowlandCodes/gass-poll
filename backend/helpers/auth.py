@@ -27,6 +27,17 @@ def format_phone_number(phone_number: str) -> str:
         return phone_number
 
     if phone_number.startswith("08"):
-        return f"+62{phone_number[2:]}"
+        return f"+62{phone_number[1:]}"
 
+    if phone_number.startswith("62"):
+        return f"+62{phone_number[2:]}"
+    
     return f"+62{phone_number}"
+
+
+
+def validate_login(email: str, password: str) -> bool:
+    if not email or not password:
+        return False
+
+    return True
