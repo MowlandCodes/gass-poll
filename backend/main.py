@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('APP_SECRET_KEY')
 app.config['APP_PORT'] = int(os.getenv('APP_PORT', 5000))
 
-CORS(app)
+CORS(app) # Enabled CORS generally
 
 app.register_blueprint(bp_rental, url_prefix='/rental')
 app.register_blueprint(bp_users, url_prefix='/users')
