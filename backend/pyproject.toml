@@ -11,7 +11,6 @@ dependencies = [
     "flask-cors>=6.0.2",
     "flask-jwt-extended>=4.7.1",
     "flask-restful>=0.3.10",
-    "pyjwt>=2.10.1",
     "pymongo>=4.15.5",
     "python-dotenv>=1.2.1",
 ]

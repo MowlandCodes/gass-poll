@@ -277,7 +277,6 @@ dependencies = [
     { name = "flask-cors" },
     { name = "flask-jwt-extended" },
     { name = "flask-restful" },
-    { name = "pyjwt" },
     { name = "pymongo" },
     { name = "python-dotenv" },
 ]
@@ -290,7 +289,6 @@ requires-dist = [
     { name = "flask-cors", specifier = ">=6.0.2" },
     { name = "flask-jwt-extended", specifier = ">=4.7.1" },
     { name = "flask-restful", specifier = ">=0.3.10" },
-    { name = "pyjwt", specifier = ">=2.10.1" },
     { name = "pymongo", specifier = ">=4.15.5" },
     { name = "python-dotenv", specifier = ">=1.2.1" },
 ]
