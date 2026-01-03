@@ -1,13 +1,12 @@
-from bson import is_valid
-from flask import Blueprint, request
-from flask_restful import Resource, Api
-
 from parser.motor import motor_parser
-from helpers.motor import validate_motors
 
+from flask import Blueprint
+from flask_jwt_extended import jwt_required
+from flask_restful import Api, Resource
+
+from helpers.motor import validate_motors
 from libs.connection import db
-from libs.utils import serialize_doc, token_required
-from resources import rental
+from libs.utils import serialize_doc
 
 bp_motor = Blueprint("motor", __name__, url_prefix="/motor")
 api_motor = Api(bp_motor)
@@ -20,27 +19,30 @@ class MotorList(Resource):
         return {"motors": motor_list}, 200
 
     ## Add a new motor
-    @token_required
-    def post(self, current_user):
+    @jwt_required()
+    def post(self):
         data = motor_parser.parse_args()
 
-        name: str = (data.get("name"),)
-        brand: str = (data.get("brand"),)
-        license_plate: str = (data.get("license_plate"),)
-        rent_price: float = (data.get("rent_price"),)
-        image: str = data.get("image", "")
+        name: str = data.get("name", "")
+        brand: str = data.get("brand", "")
+        license_plate: str = data.get("license_plate", "")
+        rent_price: float = data.get("rental_price", 0.0)
+        image_url: str = data.get("image_url", "")
 
-        is_valid = validate_motors(current_user)
+        # Optional
+        status: str = data.get("status", "available")
+
+        is_valid, reason = validate_motors(name, brand, license_plate, image_url)
         if not is_valid:
-            return {"message": "Unauthorized"}, 401
+            return {"message": "Bad Request", "reason": reason}, 400
 
         new_motor = {
             "name": name,
             "brand": brand,
-            "license_plate": license,
+            "license_plate": license_plate,
             "rent_price": rent_price,
-            "status": "available",
-            "image": image,
+            "status": status,
+            "image": image_url,
         }
 
         result = db.motor.insert_one(new_motor)
