@@ -1,12 +1,13 @@
 from datetime import datetime, timedelta
-from parser.auth import auth_register_parser
+from parser import auth
+from parser.auth import auth_register_parser, auth_login_parser
 
 import bcrypt
 import jwt
 from flask import Blueprint, current_app, request
 from flask_restful import Api, Resource
 
-from helpers.auth import format_phone_number, validate_register
+from helpers.auth import format_phone_number, validate_register, validate_login
 from libs.connection import db
 
 auth_bp = Blueprint("auth", __name__)
@@ -47,26 +48,31 @@ class register(Resource):
 
 class login(Resource):
     def post(self):
-        data = request.get_json()
-        user = db.users.find_one({"email": data.get("email")})
+        data = auth_login_parser.parse_args()
+
+        email: str = data.get("email")
+        password: str = data.get("password")
+
+        is_login_valid = validate_login(email, password)
+        if not is_login_valid:
+            return {"message": "Bad Request"}, 400
+        
+        user = db.users.find_one({"email": email})
 
         if user and bcrypt.checkpw(
-            data.get("password").encode("utf-8"), user.get("password")
+            password.encode("utf-8"), user["password"]
         ):
+            payload = {
+                "user_id": str(user["_id"]),
+                "role": user["role"] if "role" in user else "user",
+                "exp": datetime.utcnow() + timedelta(hours=1),
+            }
             token = jwt.encode(
-                {
-                    "user_id": str(user.get("_id")),
-                    "role": user.get("role") if user.get("role") else "user",
-                    "exp": datetime.now() + timedelta(hours=1),
-                },
-                current_app.config["SECRET_KEY"],
-                algorithm="HS256",
+                payload, current_app.config["SECRET_KEY"], algorithm="HS256"
             )
-
-            return {"token": token, "message": "Login successful."}, 200
-
-        return {"message": "Invalid email or password."}, 401
-
+            return {"token": token}, 200
+        
+        return {"message": "Invalid email or password"}, 401
 
 api_auth.add_resource(register, "/register")
 api_auth.add_resource(login, "/login")
