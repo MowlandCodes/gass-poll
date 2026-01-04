@@ -73,3 +73,8 @@ class login(Resource):
 
 api_auth.add_resource(register, "/register")
 api_auth.add_resource(login, "/login")
+
+
+class logout(Resource):
+    def post(self):
+        return {"message": "Logout successful"}, 200
