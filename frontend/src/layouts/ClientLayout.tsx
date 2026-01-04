@@ -1,27 +1,30 @@
 import { useState } from "react";
-import { Outlet, Link, useLocation } from "react-router-dom";
-import { Motorbike, History, UserCircle, LogOut, Menu, X } from "lucide-react";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { Motorbike, UserCircle, LogOut, Menu, X } from "lucide-react";
 import Button from "@/components/commons/Button";
 import { backendApi } from "@/libs/apiInterface";
+import LoadingScreen from "@/components/commons/LoadingScreen";
 
 export default function ClientLayout() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    let isLoggedOut = false;
+    setIsLoggingOut(true);
 
-    const response = await backendApi.get("/auth/logout");
+    try {
+      await backendApi.get("/auth/logout");
 
-    if (response.status === 200) {
-      isLoggedOut = true;
-    }
-
-    if (isLoggedOut) {
-      alert("Logout Berhasil!");
-      window.location.href = "/login";
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    } catch (error) {
+      console.error("Logout Failed:", error);
+    } finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      setIsLoggingOut(false);
+      navigate("/login", { replace: true });
     }
   };
 
@@ -32,19 +35,18 @@ export default function ClientLayout() {
       icon: <Motorbike size={20} />,
     },
     {
-      label: "Riwayat Sewa",
-      path: "/app/history",
-      icon: <History size={20} />,
-    },
-    {
       label: "Profile Saya",
       path: "/app/profile",
       icon: <UserCircle size={20} />,
     },
   ];
 
+  if (isLoggingOut) {
+    return <LoadingScreen text="Logging out..." />;
+  }
+
   return (
-    <div className="flex h-screen bg-orange-50/30 font-sans overflow-hidden">
+    <div className="flex h-screen bg-orange-50/30 font-poppins overflow-hidden">
       <aside
         className={`
         fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-orange-100 shadow-xl shadow-orange-500/5 transition-transform duration-300 ease-in-out
@@ -100,7 +102,8 @@ export default function ClientLayout() {
           <Button
             variant="ghost"
             onClick={handleLogout}
-            className="w-full justify-start text-slate-500 hover:text-red-500 hover:bg-red-50 gap-3"
+            disabled={isLoggingOut}
+            className="w-full justify-start text-slate-500 hover:text-red-500 hover:bg-red-50 gap-3 cursor-pointer"
           >
             <LogOut size={18} /> Logout
           </Button>
