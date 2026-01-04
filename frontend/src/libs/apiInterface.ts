@@ -2,7 +2,7 @@ import axios, { type AxiosInstance } from "axios";
 
 export const backendApi: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BASE_API_URL,
-  timeout: 3000,
+  timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },
