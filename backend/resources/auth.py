@@ -59,12 +59,21 @@ class login(Resource):
         user = db.users.find_one({"email": email})
 
         if user and bcrypt.checkpw(password.encode("utf-8"), user["password"]):
+            payload = {
+                "role": user["role"],
+                "name": user["name"],
+                "email": user["email"],
+            }
+
             token = create_access_token(
                 identity=str(user["_id"]),
+                additional_claims=payload,
                 expires_delta=timedelta(hours=1),
             )
 
-            response = make_response({"token": token, "message": "login successful"})
+            response = make_response(
+                {"token": token, "message": "Login successful", "user": payload}
+            )
             response.set_cookie("token", token, httponly=True)
 
             return response
