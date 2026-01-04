@@ -13,7 +13,7 @@ bp_rental = Blueprint("rental", __name__, url_prefix="/rental")
 rental_api = Api(bp_rental)
 
 
-class Rental(Resource):
+class RentalList(Resource):
     @jwt_required()
     def post(self):
         data = rental_parser.parse_args()
@@ -29,13 +29,13 @@ class Rental(Resource):
             return {"message": "Motor not found!"}, 404
 
         if motor["status"] != "available":
-            return {"message": "Motor is not available for rent!"}, 400
+            return {"message": "Motor Unavailable or Rented!"}, 400
         
         
         duration_hours = int(data.get("duration_hours", 24))
         rent_start = datetime.now()
         rent_end = rent_start + timedelta(hours=duration_hours)
-        total_price = float(motor["rental_rate"]) * duration_hours
+        total_price = float(motor["rent_price"]) * duration_hours
 
         new_rental_bill = {
             "user_id": ObjectId(current_user_id),
@@ -59,17 +59,45 @@ class Rental(Resource):
         }, 201
 
     @jwt_required()
-    def get(self, user_id=None):
-        logged_in_user_id = get_jwt_identity()
+    def get(self):
+        current_user_id = get_jwt_identity()
+        current_user = db.users.find_one({"_id": ObjectId(current_user_id)})
+        is_admin = current_user and current_user.get("role") == "admin"
 
-        if user_id:
-            if user_id != logged_in_user_id:
-                return {"message": "Unauthorized access!"}, 401
-            rentals = db.rental_bills.find({"user_id": ObjectId(user_id)})
+        user_id_query = request.args.get("user_id")
+        query = {}
+        if is_admin:
+            if user_id_query:
+                try:
+                    query["user_id"] = ObjectId(user_id_query)
+                except:
+                    return {"message": "Invalid user ID!"}, 400
         else:
-            rentals = db.rental_bills.find()
+            query["user_id"] = ObjectId(current_user_id)
 
-        bills_list = [serialize_doc(bill) for bill in rentals]
-        return bills_list, 200
+        rental_bills = db.rental_bills.find(query)
+        rental_list = [serialize_doc(rental) for rental in rental_bills]
+        return rental_list, 200
+           
+class RentalDetail(Resource):
+    @jwt_required()
+    def get(self, rental_id):
+        current_user_id = get_jwt_identity()
+        current_user = db.users.find_one({"_id": ObjectId(current_user_id)})
+        is_admin = current_user and current_user.get("role") == "admin"
 
-rental_api.add_resource(Rental, "/", "/<string:user_id>")
+        try:
+            rental_bill = db.rental_bills.find_one({"_id": ObjectId(rental_id)})
+        except:
+            return {"message": "Invalid rental ID!"}, 400
+
+        if not rental_bill:
+            return {"message": "Rental bill not found!"}, 404
+
+        if str(rental_bill["user_id"]) != current_user_id and not is_admin:
+            return {"message": "Unauthorized access!"}, 401
+
+        return serialize_doc(rental_bill), 200
+
+rental_api.add_resource(RentalList, "/")
+rental_api.add_resource(RentalDetail, "/<string:rental_id>")
