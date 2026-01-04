@@ -11,17 +11,18 @@ motor_parser.add_argument(
     "license_plate", type=str, required=True, help="License plate can't be blank"
 )
 motor_parser.add_argument(
-    "rental_price", type=float, required=True, help="Rental price can't be blank"
+    "rent_price", type=float, required=True, help="Rental price can't be blank"
 )
 motor_parser.add_argument(
     "image_url", type=str, required=True, help="Image URL can't be blank"
 )
 
 # Optional status for Motor
-motor_status = Literal["available", "not_available"]
 motor_parser.add_argument(
     "status",
-    type=motor_status,
+    type=str,
     required=False,
+    default="available",
+    choices=("available", "not_available"), 
     help="Status must either 'available' or 'not_available'",
 )

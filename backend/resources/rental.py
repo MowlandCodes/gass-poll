@@ -32,10 +32,11 @@ class RentalList(Resource):
             return {"message": "Motor Unavailable or Rented!"}, 400
         
         
-        duration_hours = int(data.get("duration_hours", 24))
+        duration_hours = int(data.get("duration_hours") or 24)
         rent_start = datetime.now()
         rent_end = rent_start + timedelta(hours=duration_hours)
-        total_price = float(motor["rent_price"]) * duration_hours
+        price_per_hour = float(motor.get("rent_price") or 0.0)
+        total_price = float(price_per_hour * duration_hours)
 
         new_rental_bill = {
             "user_id": ObjectId(current_user_id),
@@ -44,7 +45,8 @@ class RentalList(Resource):
             "rent_end": rent_end,
             "created_at": datetime.now(),
             "total_price": total_price,
-            "status": "ongoing"
+            "status": "ongoing",
+            "message": "Please return the motor on time."
         }
 
         result = db.rental_bills.insert_one(new_rental_bill)

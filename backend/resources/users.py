@@ -2,7 +2,8 @@ from bson.objectid import ObjectId
 from flask import Blueprint
 from flask_restful import Api, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from libs.utils import serialize_doc
+
+from libs.utils import admin_only, serialize_doc
 from libs.connection import db
 
 
@@ -11,12 +12,8 @@ api = Api(bp_users)
 
 class userList(Resource):
     @jwt_required()
+    @admin_only
     def get(self):
-        current_user_id = get_jwt_identity()
-        requested_by = db.users.find_one({'_id': ObjectId(current_user_id)})
-        if not requested_by or requested_by.get('role') != 'admin':
-            return {'message': 'Admin Only!'}, 403
-
         users = db.users.find()
         user_list = [serialize_doc(user) for user in users]
 
