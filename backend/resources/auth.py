@@ -1,9 +1,9 @@
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
 from parser.auth import auth_login_parser, auth_register_parser
 
 import bcrypt
 from flask import Blueprint, make_response
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt
+from flask_jwt_extended import create_access_token, get_jwt, jwt_required
 from flask_restful import Api, Resource
 
 from helpers.auth import format_phone_number, validate_login, validate_register
@@ -83,12 +83,9 @@ class login(Resource):
 
 class Logout(Resource):
     @jwt_required()
-    def post(self):
+    def get(self):
         jti = get_jwt()["jti"]
-        db.token_blocklist.insert_one({
-            "jti": jti,
-            "created_at": datetime.now() 
-        })
+        db.token_blocklist.insert_one({"jti": jti, "created_at": datetime.now()})
         response = make_response({"message": "Logout successful"})
         response.status_code = 200
 
