@@ -1,34 +1,65 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock, ArrowLeft, Bike } from "lucide-react";
+import { Mail, Lock, ArrowLeft, Motorbike, AlertCircle } from "lucide-react";
 import Button from "@/components/commons/Button";
 import Input from "@/components/commons/InputField";
+import { backendApi } from "@/libs/apiInterface";
+import { isAxiosError } from "axios";
+
+interface IFormData {
+  email: string;
+  password: string;
+}
+
+interface IResponseLogin {
+  token: string;
+  message: string;
+}
 
 export default function Login() {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [formData, setFormData] = useState({
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [formData, setFormData] = useState<IFormData>({
     email: "",
     password: "",
   });
+  const [error, setError] = useState<string>("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
 
-    setTimeout(() => {
-      console.log("Login Payload:", formData);
+    try {
+      const response = await backendApi.post<IResponseLogin>(
+        "/auth/login",
+        formData,
+      );
 
-      // TODO: Login Logic
+      console.log("Login Successful...");
+      const { token } = response.data;
 
-      setIsLoading(false);
+      localStorage.setItem("token", token);
+
+      // If success navigate to dashboard
       navigate("/app/dashboard");
-    }, 1500);
+    } catch (err) {
+      console.error("An error occured on Login...");
+
+      if (isAxiosError(err)) {
+        setError(err.response?.data?.message);
+      } else {
+        console.error("API Interface Error: ", err);
+        setError("Something went wrong...");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -38,13 +69,13 @@ export default function Login() {
           to="/"
           className="absolute top-8 left-8 text-slate-500 hover:text-orange-600 transition-colors flex items-center gap-2 font-bold text-sm"
         >
-          <ArrowLeft size={18} /> Balik ke Kandang
+          <ArrowLeft size={18} /> Kembali ke Beranda
         </Link>
 
         <div className="max-w-md w-full mx-auto">
           <div className="mb-10">
             <div className="bg-orange-100 w-12 h-12 rounded-xl flex items-center justify-center mb-6 text-orange-600">
-              <Bike size={24} />
+              <Motorbike size={24} />
             </div>
             <h1 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">
               Welcome Back! 👋
@@ -53,6 +84,13 @@ export default function Login() {
               Silahkan Masuk menggunakan email dan password kamu.
             </p>
           </div>
+
+          {error && (
+            <div className="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl flex items-center gap-3 animate-pulse">
+              <AlertCircle size={20} />
+              <span className="text-sm font-bold">{error}</span>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <Input
@@ -91,7 +129,15 @@ export default function Login() {
               size="lg"
               className="w-full py-4 text-lg shadow-orange-500/20"
             >
-              {isLoading ? "Sedang Menunggu...." : "Login"}
+              {isLoading ? (
+                <span className="flex items-center gap-2">
+                  {/* Spinner CSS sederhana */}
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Authenticating...
+                </span>
+              ) : (
+                "Login"
+              )}
             </Button>
           </form>
 
