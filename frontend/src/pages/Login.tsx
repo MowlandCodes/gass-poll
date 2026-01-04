@@ -11,9 +11,16 @@ interface IFormData {
   password: string;
 }
 
+interface ILoggedInUser {
+  role: string;
+  name: string;
+  email: string;
+}
+
 interface IResponseLogin {
   token: string;
   message: string;
+  user: ILoggedInUser;
 }
 
 export default function Login() {
@@ -42,9 +49,10 @@ export default function Login() {
       );
 
       console.log("Login Successful...");
-      const { token } = response.data;
+      const { token, user } = response.data;
 
       localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
       // If success navigate to dashboard
       navigate("/app/dashboard");
