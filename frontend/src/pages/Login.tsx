@@ -5,6 +5,7 @@ import Button from "@/components/commons/Button";
 import Input from "@/components/commons/InputField";
 import { backendApi } from "@/libs/apiInterface";
 import { isAxiosError } from "axios";
+import NaikMotorImage from "@/assets/img/naik-motor.webp";
 
 interface IFormData {
   email: string;
@@ -178,8 +179,8 @@ export default function Login() {
             <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
 
             <img
-              src="https://images.unsplash.com/photo-1636428818733-acdee12591e4?q=80&w=627&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt="Login Illustration"
+              src={NaikMotorImage}
+              alt="Naik motor"
               className="w-full h-80 object-cover object-center relative rounded-3xl shadow-2xl shadow-orange-500/20 border-4 border-white rotate-3 hover:rotate-0 transition-transform duration-700"
             />
 

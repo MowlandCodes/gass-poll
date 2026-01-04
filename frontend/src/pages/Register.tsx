@@ -14,6 +14,7 @@ import Button from "@/components/commons/Button";
 import Input from "@/components/commons/InputField";
 import { backendApi } from "@/libs/apiInterface";
 import { isAxiosError } from "axios";
+import RegisterImage from "@/assets/img/register.webp";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -200,7 +201,6 @@ export default function Register() {
 
       {/* --- GAMBAR SECTION (KIRI) --- */}
       <div className="hidden lg:block lg:w-1/2 bg-slate-900 relative overflow-hidden">
-        {/* Background pattern beda dikit biar variatif */}
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
 
         <div className="absolute inset-0 flex items-center justify-center p-20">
@@ -209,7 +209,7 @@ export default function Register() {
             <div className="absolute bottom-10 -left-10 w-64 h-64 bg-blue-500 rounded-full blur-[80px] opacity-40"></div>
 
             <img
-              src="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?q=80&w=1000&auto=format&fit=crop"
+              src={RegisterImage}
               alt="Register Illustration"
               className="relative rounded-3xl shadow-2xl shadow-black/50 border-4 border-slate-800 -rotate-2 hover:rotate-0 transition-transform duration-700 object-cover h-full w-full"
             />
