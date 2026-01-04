@@ -151,6 +151,7 @@ export default function Register() {
               name="phone"
               type="tel"
               placeholder="+628xxxxxxxxx"
+              onChange={handleChange}
               icon={<Phone size={20} />}
               required
             />
