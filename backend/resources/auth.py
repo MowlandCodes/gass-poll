@@ -74,7 +74,13 @@ class login(Resource):
 
 class Logout(Resource):
     def post(self):
-        return {"message": "Logout successful"}, 200
+        response = make_response({"message": "Logout successful"})
+        response.status_code = 200
+
+        # Remove cookie, biar nggk bisa di pake lagi
+        response.set_cookie("token", "", httponly=True, expires=0)
+
+        return response
 
 
 api_auth.add_resource(register, "/register")
