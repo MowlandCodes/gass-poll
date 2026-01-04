@@ -73,7 +73,7 @@ class login(Resource):
 
 
 class Logout(Resource):
-    def post(self):
+    def get(self):
         response = make_response({"message": "Logout successful"})
         response.status_code = 200
 
