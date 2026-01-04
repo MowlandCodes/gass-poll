@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Mail, Lock, ArrowLeft, Motorbike, AlertCircle } from "lucide-react";
 import Button from "@/components/commons/Button";
 import Input from "@/components/commons/InputField";
@@ -24,7 +24,9 @@ interface IResponseLogin {
 }
 
 export default function Login() {
+  const location = useLocation();
   const navigate = useNavigate();
+  const from = location.state?.from?.pathname || "/app/dashboard";
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<IFormData>({
     email: "",
@@ -54,8 +56,7 @@ export default function Login() {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      // If success navigate to dashboard
-      navigate("/app/dashboard");
+      navigate(from, { replace: true });
     } catch (err) {
       console.error("An error occured on Login...");
 
