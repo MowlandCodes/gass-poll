@@ -7,6 +7,8 @@ import GuestRoute from "@/routes/GuestRoute";
 import ProtectedRoute from "@/routes/ProtectedRoute";
 import Register from "@/pages/Register";
 import ClientLayout from "@/layouts/ClientLayout";
+import AdminRoute from "./AdminRoute";
+import AdminLayout from "@/layouts/AdminLayout";
 
 const router = createBrowserRouter([
   // Landing Page
@@ -43,7 +45,7 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       {
-        element: <ClientLayout />, // Masih pake Layout utama
+        element: <ClientLayout />,
         children: [
           {
             path: "dashboard",
@@ -52,6 +54,22 @@ const router = createBrowserRouter([
           {
             path: "profile",
             element: <div>Profile User</div>,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: "/admin",
+    element: <AdminRoute />,
+    errorElement: <NotFound />,
+    children: [
+      {
+        element: <AdminLayout />,
+        children: [
+          {
+            path: "dashboard",
+            element: <div>Dashboard Admin</div>,
           },
         ],
       },

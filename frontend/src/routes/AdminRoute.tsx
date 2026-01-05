@@ -11,30 +11,27 @@ interface IUser {
   role: "user" | "admin";
 }
 
-export default function ProtectedRoute() {
+export default function AdminRoute() {
   const location = useLocation();
   const accessToken = localStorage.getItem("token");
 
   // Default isLoading TRUE
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   useEffect(() => {
     const validateSession = async () => {
       if (!accessToken) {
         setIsLoading(false);
-        setIsAuthenticated(false);
+        setIsAdmin(false);
         return;
       }
 
       try {
         const response = await backendApi.get<IUser>("/users/me");
 
-        if (response.status === 200) {
-          setIsAuthenticated(true);
-
-          setIsAdmin(response.data.role === "admin");
+        if (response.status === 200 && response.data.role === "admin") {
+          setIsAdmin(true);
         } else {
           throw new Error("Unauthorized");
         }
@@ -44,7 +41,7 @@ export default function ProtectedRoute() {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
 
-        setIsAuthenticated(false);
+        setIsAdmin(false);
       } finally {
         setIsLoading(false);
       }
@@ -54,17 +51,12 @@ export default function ProtectedRoute() {
   }, [accessToken]);
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return <LoadingScreen text="Validating Session" />;
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  if (isAdmin) {
-    return (
-      <Navigate to="/admin/dashboard" state={{ from: location }} replace />
-    );
+  if (!isAdmin) {
+    // If not admin return to Dashboard, and let the protected route handle the rest
+    return <Navigate to="/app/dashboard" state={{ from: location }} replace />;
   }
 
   return <Outlet />;
