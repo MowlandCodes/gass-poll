@@ -6,7 +6,7 @@ from flask_restful import Api, Resource
 
 from helpers.motor import validate_motors
 from libs.connection import db
-from libs.utils import serialize_doc, admin_only
+from libs.utils import admin_only, serialize_doc
 
 bp_motor = Blueprint("motor", __name__, url_prefix="/motor")
 api_motor = Api(bp_motor)
@@ -18,7 +18,6 @@ class MotorList(Resource):
         motor_list = [serialize_doc(motor) for motor in motors]
         return motor_list, 200
 
-    ## Add a new motor
     @jwt_required()
     @admin_only
     def post(self):
@@ -30,7 +29,6 @@ class MotorList(Resource):
         rent_price: float = data.get("rent_price", 0.0)
         image_url: str = data.get("image_url", "")
 
-        # Optional
         status: str = data.get("status", "available")
 
         is_valid, reason = validate_motors(name, brand, license_plate, image_url)
@@ -53,4 +51,4 @@ class MotorList(Resource):
         }, 201
 
 
-api_motor.add_resource(MotorList, "/")
+api_motor.add_resource(MotorList, "")
