@@ -16,7 +16,7 @@ class MotorList(Resource):
     def get(self):
         motors = db.motor.find()
         motor_list = [serialize_doc(motor) for motor in motors]
-        return {"motors": motor_list}, 200
+        return motor_list, 200
 
     ## Add a new motor
     @jwt_required()
