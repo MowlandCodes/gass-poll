@@ -1,8 +1,11 @@
 import functools
-from bson.objectid import ObjectId
 from datetime import datetime
-from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
+
+from bson.objectid import ObjectId
+from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
+
 from libs.connection import db
+
 
 def serialize_doc(doc):
     if not doc:
@@ -14,12 +17,13 @@ def serialize_doc(doc):
         doc["user_id"] = str(doc["user_id"])
     if "motor_id" in doc:
         doc["motor_id"] = str(doc["motor_id"])
-    
+
     for key, value in doc.items():
         if isinstance(value, datetime):
             doc[key] = value.isoformat()
 
     return doc
+
 
 def admin_only(decorator):
     @functools.wraps(decorator)
@@ -28,6 +32,7 @@ def admin_only(decorator):
         user_id = get_jwt_identity()
         user = db.users.find_one({"_id": ObjectId(user_id)})
         if not user or user.get("role") != "admin":
-            return {"message": "Admin Only!"}, 403
+            return {"message": "Unauthorized"}, 403
         return decorator(*args, **kwargs)
+
     return wrapper
