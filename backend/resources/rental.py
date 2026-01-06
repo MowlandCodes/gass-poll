@@ -1,13 +1,13 @@
 from datetime import datetime, timedelta
+from parser.rental import rental_parser
 
 from bson.objectid import ObjectId
 from flask import Blueprint, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Api, Resource
-from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from libs.connection import db
 from libs.utils import serialize_doc
-from parser.rental import rental_parser
 
 bp_rental = Blueprint("rental", __name__, url_prefix="/rental")
 rental_api = Api(bp_rental)
@@ -18,7 +18,7 @@ class RentalList(Resource):
     def post(self):
         data = rental_parser.parse_args()
         current_user_id = get_jwt_identity()
-        motor_id: str = data.get("motor_id")
+        motor_id: str = data.get("motor_id", "")
 
         try:
             motor = db.motor.find_one({"_id": ObjectId(motor_id)})
@@ -30,8 +30,7 @@ class RentalList(Resource):
 
         if motor["status"] != "available":
             return {"message": "Motor Unavailable or Rented!"}, 400
-        
-        
+
         duration_hours = int(data.get("duration_hours") or 24)
         rent_start = datetime.now()
         rent_end = rent_start + timedelta(hours=duration_hours)
@@ -46,13 +45,13 @@ class RentalList(Resource):
             "created_at": datetime.now(),
             "total_price": total_price,
             "status": "ongoing",
-            "message": "Please return the motor on time."
+            "message": "Please return the motor on time.",
         }
 
         result = db.rental_bills.insert_one(new_rental_bill)
 
         db.motor.update_one(
-            {"_id": ObjectId(motor_id)}, {"$set": {"status": "rented"}}
+            {"_id": ObjectId(motor_id)}, {"$set": {"status": "not_available"}}
         )
 
         return {
@@ -80,7 +79,8 @@ class RentalList(Resource):
         rental_bills = db.rental_bills.find(query)
         rental_list = [serialize_doc(rental) for rental in rental_bills]
         return rental_list, 200
-           
+
+
 class RentalDetail(Resource):
     @jwt_required()
     def get(self, rental_id):
@@ -100,6 +100,7 @@ class RentalDetail(Resource):
             return {"message": "Unauthorized access!"}, 401
 
         return serialize_doc(rental_bill), 200
+
 
 rental_api.add_resource(RentalList, "/")
 rental_api.add_resource(RentalDetail, "/<string:rental_id>")
