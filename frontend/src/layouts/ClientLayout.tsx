@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
-import { Motorbike, UserCircle, LogOut, Menu, X } from "lucide-react";
+import { Motorbike, ShoppingCart, LogOut, Menu, X } from "lucide-react";
 import Button from "@/components/commons/Button";
 import { backendApi } from "@/libs/apiInterface";
 import LoadingScreen from "@/components/commons/LoadingScreen";
@@ -35,9 +35,9 @@ export default function ClientLayout() {
       icon: <Motorbike size={20} />,
     },
     {
-      label: "Profile Saya",
-      path: "/app/profile",
-      icon: <UserCircle size={20} />,
+      label: "Pesanan Saya",
+      path: "/app/transactions",
+      icon: <ShoppingCart size={20} />,
     },
   ];
 
