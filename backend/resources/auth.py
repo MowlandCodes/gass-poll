@@ -63,6 +63,7 @@ class login(Resource):
                 "role": user["role"],
                 "name": user["name"],
                 "email": user["email"],
+                "user_id": str(user["_id"]),
             }
 
             token = create_access_token(
