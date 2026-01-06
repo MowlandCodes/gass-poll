@@ -35,7 +35,7 @@ export default function ClientLayout() {
       icon: <Motorbike size={20} />,
     },
     {
-      label: "Pesanan Saya",
+      label: "Transaksi Saya",
       path: "/app/transactions",
       icon: <ShoppingCart size={20} />,
     },
