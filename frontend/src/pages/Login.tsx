@@ -16,6 +16,7 @@ interface ILoggedInUser {
   role: string;
   name: string;
   email: string;
+  user_id: string;
 }
 
 interface IResponseLogin {
