@@ -9,6 +9,7 @@ import Register from "@/pages/Register";
 import ClientLayout from "@/layouts/ClientLayout";
 import AdminRoute from "./AdminRoute";
 import AdminLayout from "@/layouts/AdminLayout";
+import ClientDashboard from "@/pages/ClientDashboard";
 
 const router = createBrowserRouter([
   // Landing Page
@@ -49,7 +50,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: "dashboard",
-            element: <div>Dashboard Page</div>,
+            element: <ClientDashboard />,
           },
           {
             path: "profile",
