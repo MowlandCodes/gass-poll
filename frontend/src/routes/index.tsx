@@ -10,6 +10,7 @@ import ClientLayout from "@/layouts/ClientLayout";
 import AdminRoute from "./AdminRoute";
 import AdminLayout from "@/layouts/AdminLayout";
 import ClientDashboard from "@/pages/ClientDashboard";
+import ClientTransactions from "@/pages/ClientTransaction";
 
 const router = createBrowserRouter([
   // Landing Page
@@ -53,8 +54,8 @@ const router = createBrowserRouter([
             element: <ClientDashboard />,
           },
           {
-            path: "profile",
-            element: <div>Profile User</div>,
+            path: "transactions",
+            element: <ClientTransactions />,
           },
         ],
       },
