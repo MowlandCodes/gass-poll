@@ -108,7 +108,12 @@ export default function ClientDashboard() {
                 className={`
                   px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all border
                   ${
-                    filterType === type
+                    filterType ===
+                    (type === "Tersedia"
+                      ? "available"
+                      : type === "Tidak Tersedia"
+                        ? "not_available"
+                        : "all")
                       ? "bg-orange-500 text-white border-orange-500 shadow-lg shadow-orange-500/30"
                       : "bg-white text-slate-600 border-slate-200 hover:border-orange-200 hover:bg-orange-50"
                   }
