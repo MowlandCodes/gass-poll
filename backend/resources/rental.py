@@ -45,7 +45,6 @@ class RentalList(Resource):
             "created_at": datetime.now(),
             "total_price": total_price,
             "status": "ongoing",
-            "message": "Please return the motor on time.",
         }
 
         result = db.rental_bills.insert_one(new_rental_bill)
