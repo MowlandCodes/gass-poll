@@ -44,6 +44,7 @@ class RentalList(Resource):
             "rent_end": rent_end,
             "created_at": datetime.now(),
             "total_price": total_price,
+            "payment_status": "unpaid",
             "status": "ongoing",
         }
 
@@ -99,7 +100,35 @@ class RentalDetail(Resource):
             return {"message": "Unauthorized access!"}, 401
 
         return serialize_doc(rental_bill), 200
+    
+class RentalPayment(Resource):
+    @jwt_required()
+    def post(self, rental_id):
+        current_user_id = get_jwt_identity()
+
+        try:
+            rental_bill = db.rental_bills.find_one({"_id": ObjectId(rental_id)})
+        except:
+            return {"message": "Invalid rental ID!"}, 400
+
+        if not rental_bill:
+            return {"message": "Rental bill not found!"}, 404
+
+        if str(rental_bill["user_id"]) != current_user_id:
+            return {"message": "Unauthorized access, just pay your own bill bruh!"}, 401
+
+        if rental_bill["payment_status"] == "paid":
+            return {"message": "Rental bill is already paid."}, 400
+
+        db.rental_bills.update_one(
+            {"_id": ObjectId(rental_id)},
+            {"$set": {"payment_status": "paid",
+                      "paid_at": datetime.now()}},
+        )
+
+        return {"message": "Rental bill payment successful."}, 200
 
 
 rental_api.add_resource(RentalList, "/")
 rental_api.add_resource(RentalDetail, "/<string:rental_id>")
+rental_api.add_resource(RentalPayment, "/<string:rental_id>/pay")
