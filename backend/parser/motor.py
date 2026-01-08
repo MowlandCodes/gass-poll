@@ -1,5 +1,3 @@
-from typing import Literal
-
 from flask_restful import reqparse
 
 motor_parser = reqparse.RequestParser()
@@ -23,7 +21,7 @@ motor_parser.add_argument(
     type=str,
     required=False,
     default="available",
-    choices=("available", "not_available"), 
+    choices=("available", "not_available"),
     help="Status must either 'available' or 'not_available'",
 )
 
