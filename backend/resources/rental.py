@@ -135,20 +135,23 @@ class RentalPayment(Resource):
 
         return {"message": "Rental bill payment successful."}, 200
 
+
 class RentalPayAll(Resource):
     @jwt_required()
     def post(self):
         current_user_id = get_jwt_identity()
         result = db.rental_bills.update_many(
             {"user_id": ObjectId(current_user_id), "payment_status": "unpaid"},
-            {"$set": {"payment_status": "paid", "paid_at": datetime.now()}}
+            {"$set": {"payment_status": "paid", "paid_at": datetime.now()}},
         )
         if result.modified_count == 0:
             return {"message": "No unpaid rental bills found."}, 400
-        return {"message": f"Successfully paid {result.modified_count} rental bills."}, 200
+        return {
+            "message": f"Successfully paid {result.modified_count} rental bills."
+        }, 200
 
 
-rental_api.add_resource(RentalList, "/")
+rental_api.add_resource(RentalList, "")
 rental_api.add_resource(RentalPayAll, "/pay_all")
 rental_api.add_resource(RentalDetail, "/<string:rental_id>")
 rental_api.add_resource(RentalPayment, "/<string:rental_id>/pay")
