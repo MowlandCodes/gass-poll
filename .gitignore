@@ -142,3 +142,4 @@ vite.config.ts.timestamp-*
 .venv
 .python-version
 __pycache__
+Gass-Poll.postman_collection.json

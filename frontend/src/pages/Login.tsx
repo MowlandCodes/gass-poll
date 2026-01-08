@@ -3,6 +3,30 @@ import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, ArrowLeft, Bike } from "lucide-react";
 import Button from "@/components/commons/Button";
 import Input from "@/components/commons/InputField";
+<<<<<<< HEAD
+=======
+import { backendApi } from "@/libs/apiInterface";
+import { isAxiosError } from "axios";
+import NaikMotorImage from "@/assets/img/naik-motor.webp";
+
+interface IFormData {
+  email: string;
+  password: string;
+}
+
+interface ILoggedInUser {
+  role: string;
+  name: string;
+  email: string;
+  user_id: string;
+}
+
+interface IResponseLogin {
+  token: string;
+  message: string;
+  user: ILoggedInUser;
+}
+>>>>>>> 3888ef5ce9b1f3ca75f365121581dfa711c8969b
 
 export default function Login() {
   const navigate = useNavigate();

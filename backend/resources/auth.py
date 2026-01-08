@@ -60,9 +60,20 @@ class login(Resource):
         
         user = db.users.find_one({"email": email})
 
+<<<<<<< HEAD
         if user and bcrypt.checkpw(
             password.encode("utf-8"), user["password"]
         ):
+=======
+        if user and bcrypt.checkpw(password.encode("utf-8"), user["password"]):
+            payload = {
+                "role": user["role"],
+                "name": user["name"],
+                "email": user["email"],
+                "user_id": str(user["_id"]),
+            }
+
+>>>>>>> 3888ef5ce9b1f3ca75f365121581dfa711c8969b
             token = create_access_token(
                 identity=str(user["_id"]),
                 expires_delta=timedelta(hours=1),
