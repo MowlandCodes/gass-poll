@@ -4,16 +4,14 @@ import { backendApi } from "@/libs/apiInterface";
 import MotorCard from "@/components/modules/MotorCard";
 import Button from "@/components/commons/Button";
 
-type MotorStatus = "available" | "not_available";
-
 interface Motor {
   _id: string;
-  name: string;
   brand: string;
   image: string;
   license_plate: string;
+  name: string;
   rent_price: number;
-  status: MotorStatus;
+  status: "available" | "not_available";
 }
 
 export default function ClientDashboard() {

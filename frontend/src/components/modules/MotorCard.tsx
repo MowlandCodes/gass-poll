@@ -26,11 +26,19 @@ export default function MotorCard({
     }
   };
 
+  const getMotorImage = (path: string | undefined) => {
+    if (!path) return "https://placehold.co/600x400/EEE/31343C?text=N/A";
+    return `${import.meta.env.VITE_BASE_API_URL}/${path}`;
+  };
+
   return (
     <div className="group bg-white rounded-2xl border border-orange-100 shadow-sm hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 overflow-hidden flex flex-col h-full">
       <div className="relative aspect-4/3 overflow-hidden bg-gray-100">
         <img
-          src={image_url}
+          src={
+            getMotorImage(image_url) ||
+            "https://placehold.co/600x400/EEE/31343C?text=N/A"
+          }
           alt={name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
@@ -47,7 +55,7 @@ export default function MotorCard({
           <span
             className={`text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-md border ${getStatusColor(status)}`}
           >
-            {status === "available" ? "Tersedia" : "Tidak Tersedia"}
+            {status === "available" ? "Tersedia" : "Tersewa"}
           </span>
         </div>
 

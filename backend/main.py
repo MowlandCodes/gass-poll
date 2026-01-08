@@ -15,7 +15,7 @@ load_dotenv()
 
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="./public", static_url_path="/public")
 app.config["SECRET_KEY"] = os.getenv("APP_SECRET_KEY")
 app.config["APP_PORT"] = int(os.getenv("APP_PORT", 5000))
 

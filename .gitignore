@@ -143,3 +143,5 @@ vite.config.ts.timestamp-*
 .python-version
 __pycache__
 Gass-Poll.postman_collection.json
+BackEnd.postman_collection.json
+.gemini-settings
