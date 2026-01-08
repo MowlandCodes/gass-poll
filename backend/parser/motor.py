@@ -26,3 +26,18 @@ motor_parser.add_argument(
     choices=("available", "not_available"), 
     help="Status must either 'available' or 'not_available'",
 )
+
+
+motor_update_parser = reqparse.RequestParser()
+motor_update_parser.add_argument("name", type=str, required=False)
+motor_update_parser.add_argument("brand", type=str, required=False)
+motor_update_parser.add_argument("license_plate", type=str, required=False)
+motor_update_parser.add_argument("rent_price", type=float, required=False)
+motor_update_parser.add_argument("image_url", type=str, required=False)
+motor_update_parser.add_argument(
+    "status",
+    type=str,
+    required=False,
+    choices=("available", "not_available"), 
+    help="Status must either 'available' or 'not_available'",
+)

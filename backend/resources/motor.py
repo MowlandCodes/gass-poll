@@ -1,4 +1,8 @@
-from parser.motor import motor_parser
+import resource
+import stat
+from turtle import st
+from parser.motor import motor_parser, motor_update_parser
+from bson import ObjectId
 
 from flask import Blueprint
 from flask_jwt_extended import jwt_required
@@ -49,6 +53,61 @@ class MotorList(Resource):
             "message": "Motor added successfully.",
             "motor_id": str(result.inserted_id),
         }, 201
+    
 
+class MotorItem(Resource):
+    @jwt_required()
+    @admin_only
 
+    def put(self, motor_id):
+        if not ObjectId.is_valid(motor_id):
+            return {"message": "Invalid motor ID."}, 400
+        
+        data = motor_update_parser.parse_args()
+
+        motor = db.motor.find_one({"_id": ObjectId(motor_id)})
+        if not motor:
+            return {"message": "Motor not found."}, 404
+        
+        name = data.get("name", motor["name"])
+        brand = data.get("brand", motor["brand"])
+        license_plate = data.get("license_plate", motor["license_plate"])
+        rent_price = data.get("rent_price", motor["rent_price"])
+        image_url = data.get("image_url", motor["image"])
+        status = data.get("status", motor["status"])
+
+        is_valid, reason = validate_motors(name, brand, license_plate, image_url)
+        if not is_valid:
+            return {"message": "Bad Request", "reason": reason}, 400
+        
+        updated_motor = {
+            "name": name,
+            "brand": brand,
+            "license_plate": license_plate,
+            "rent_price": rent_price,
+            "status": status,
+            "image": image_url,
+        }
+
+        db.motor.update_one({"_id": ObjectId(motor_id)}, {"$set": updated_motor})
+
+        return {"message": "Motor updated successfully."}, 200
+    
+    @jwt_required()
+    @admin_only
+    def delete(self, motor_id):
+        if not ObjectId.is_valid(motor_id):
+            return {"message": "Invalid motor ID."}, 400
+        
+        motor = db.motor.find_one({"_id": ObjectId(motor_id)})
+        if not motor:
+            return {"message": "Motor not found."}, 404
+        
+        db.motor.delete_one({"_id": ObjectId(motor_id)})
+
+        return {"message": "Motor deleted successfully."}, 200
+    
+
+    
 api_motor.add_resource(MotorList, "")
+api_motor.add_resource(MotorItem, "/<string:motor_id>")
