@@ -31,6 +31,7 @@ class RentalList(Resource):
         if motor["status"] != "available":
             return {"message": "Motor Unavailable or Rented!"}, 400
 
+        # Calculate the total price
         duration_hours = int(data.get("duration_hours") or 24)
         rent_start = datetime.now()
         rent_end = rent_start + timedelta(hours=duration_hours)
@@ -65,14 +66,14 @@ class RentalList(Resource):
         current_user = db.users.find_one({"_id": ObjectId(current_user_id)})
         is_admin = current_user and current_user.get("role") == "admin"
 
+        # Get Query parameter of user_id
         user_id_query = request.args.get("user_id")
         query = {}
-        if is_admin:
-            if user_id_query:
-                try:
-                    query["user_id"] = ObjectId(user_id_query)
-                except:
-                    return {"message": "Invalid user ID!"}, 400
+        if is_admin and user_id_query:
+            try:
+                query["user_id"] = ObjectId(user_id_query)
+            except:
+                return {"message": "Invalid user ID!"}, 400
         else:
             query["user_id"] = ObjectId(current_user_id)
 
@@ -100,7 +101,8 @@ class RentalDetail(Resource):
             return {"message": "Unauthorized access!"}, 401
 
         return serialize_doc(rental_bill), 200
-    
+
+
 class RentalPayment(Resource):
     @jwt_required()
     def post(self, rental_id):
@@ -122,13 +124,18 @@ class RentalPayment(Resource):
 
         db.rental_bills.update_one(
             {"_id": ObjectId(rental_id)},
-            {"$set": {"payment_status": "paid",
-                      "paid_at": datetime.now()}},
+            {
+                "$set": {
+                    "payment_status": "paid",
+                    "paid_at": datetime.now(),
+                    "status": "completed",
+                }
+            },
         )
 
         return {"message": "Rental bill payment successful."}, 200
 
 
-rental_api.add_resource(RentalList, "/")
+rental_api.add_resource(RentalList, "")
 rental_api.add_resource(RentalDetail, "/<string:rental_id>")
 rental_api.add_resource(RentalPayment, "/<string:rental_id>/pay")
