@@ -39,6 +39,9 @@ export default function ClientTransactions() {
   const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState<EnrichedTransaction[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [paymentStatus, setPaymentStatus] = useState<"unpaid" | "paid">(
+    "unpaid",
+  );
 
   useEffect(() => {
     const fetchAndProcessData = async () => {
@@ -112,6 +115,28 @@ export default function ClientTransactions() {
     return `${import.meta.env.VITE_BASE_API_URL}/${path}`;
   };
 
+  const handleBayarAll = async () => {
+    setLoading(true);
+    try {
+      const response = await backendApi.post("/rental/pay_all");
+
+      if (response.status === 400) {
+        setPaymentStatus("unpaid");
+        alert("Tidak ada tagihan yang belum terbayar.");
+      } else if (response.status === 200) {
+        setPaymentStatus("paid");
+        alert("Berhasil membayar semua tagihan.");
+      } else {
+        throw new Error("Gagal membayar semua tagihan.");
+      }
+    } catch (err) {
+      console.error("Failed to pay all:", err);
+      alert("Gagal membayar semua tagihan. Coba lagi nanti.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="max-w-5xl mx-auto pb-20">
       <div className="mb-8">
@@ -141,6 +166,18 @@ export default function ClientTransactions() {
                 * Segera bayar tagihan anda jika anda memiliki tagihan.
               </p>
             </div>
+            {totalUnpaid > 0 && paymentStatus === "unpaid" && (
+              <div>
+                <Button
+                  size="lg"
+                  variant="primary"
+                  className="bg-orange-400 hover:bg-orange-400 hover:drop-shadow-lg/10 drop-shadow-black transition-all duration-300 cursor-pointer"
+                  onClick={handleBayarAll}
+                >
+                  Bayar Sekarang
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}
