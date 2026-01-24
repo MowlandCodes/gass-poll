@@ -68,7 +68,7 @@ export default function MotorCard({
             <span className="text-xs text-slate-400">Harga Sewa</span>
             <span className="text-lg font-black text-brand-600">
               Rp {rent_price.toLocaleString("id-ID")}
-              <span className="text-xs font-normal text-slate-400">/hari</span>
+              <span className="text-xs font-normal text-slate-400">/jam</span>
             </span>
           </div>
 
