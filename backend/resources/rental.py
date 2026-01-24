@@ -117,10 +117,10 @@ class RentalPayment(Resource):
             return {"message": "Rental bill not found!"}, 404
 
         if str(rental_bill["user_id"]) != current_user_id:
-            return {"message": "Unauthorized access, just pay your own bill bruh!"}, 401
+            return {"message": "Unauthorized access"}, 401
 
         if rental_bill["payment_status"] == "paid":
-            return {"message": "Rental bill is already paid."}, 400
+            return {"message": "Rental bill is already paid."}, 200
 
         db.rental_bills.update_one(
             {"_id": ObjectId(rental_id)},
@@ -140,15 +140,23 @@ class RentalPayAll(Resource):
     @jwt_required()
     def post(self):
         current_user_id = get_jwt_identity()
-        result = db.rental_bills.update_many(
-            {"user_id": ObjectId(current_user_id), "payment_status": "unpaid"},
-            {"$set": {"payment_status": "paid", "paid_at": datetime.now()}},
-        )
-        if result.modified_count == 0:
-            return {"message": "No unpaid rental bills found."}, 400
-        return {
-            "message": f"Successfully paid {result.modified_count} rental bills."
-        }, 200
+        try:
+            result = db.rental_bills.update_many(
+                {"user_id": ObjectId(current_user_id), "payment_status": "unpaid"},
+                {"$set": {"payment_status": "paid", "paid_at": datetime.now()}},
+            )
+            if result.modified_count == 0:
+                return {
+                    "status": "no_unpaid",
+                    "message": "No unpaid rental bills found.",
+                }, 200
+            return {
+                "status": "paid",
+                "message": f"Successfully paid {result.modified_count} rental bills.",
+            }, 200
+        except Exception as e:
+            print(f"Error occurred: {str(e)}")
+            return {"message": "Error occurred while processing the request."}, 500
 
 
 rental_api.add_resource(RentalList, "")
