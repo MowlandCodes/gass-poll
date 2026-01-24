@@ -35,6 +35,11 @@ interface EnrichedTransaction extends Transaction {
   motor: Motor | undefined;
 }
 
+interface PayAllStatus {
+  status: "no_unpaid" | "paid";
+  message: string;
+}
+
 export default function ClientTransactions() {
   const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState<EnrichedTransaction[]>([]);
@@ -118,20 +123,23 @@ export default function ClientTransactions() {
   const handleBayarAll = async () => {
     setLoading(true);
     try {
-      const response = await backendApi.post("/rental/pay_all");
+      const response = await backendApi.post<PayAllStatus>("/rental/pay_all");
 
-      if (response.status === 400) {
-        setPaymentStatus("unpaid");
-        alert("Tidak ada tagihan yang belum terbayar.");
-      } else if (response.status === 200) {
+      if (response.status === 200 && response.data.status === "paid") {
         setPaymentStatus("paid");
-        alert("Berhasil membayar semua tagihan.");
-      } else {
-        throw new Error("Gagal membayar semua tagihan.");
+        alert(response.data.message);
+      } else if (
+        response.status === 200 &&
+        response.data.status === "no_unpaid"
+      ) {
+        setPaymentStatus("unpaid");
+        alert(response.data.message);
       }
     } catch (err) {
-      console.error("Failed to pay all:", err);
-      alert("Gagal membayar semua tagihan. Coba lagi nanti.");
+      console.error("Failed to pay all transactions:", err);
+
+      alert("Gagal melakukan pembayaran. Coba lagi nanti.");
+      throw new Error("Gagal melakukan pembayaran. Coba lagi nanti.");
     } finally {
       setLoading(false);
     }
