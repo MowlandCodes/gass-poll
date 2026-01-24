@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, type RouteObject } from "react-router-dom";
 import MainLayout from "@/layouts/MainLayout";
 import LandingPage from "@/pages/LandingPage";
 import NotFound from "@/pages/404";
@@ -12,7 +12,7 @@ import AdminLayout from "@/layouts/AdminLayout";
 import ClientDashboard from "@/pages/ClientDashboard";
 import ClientTransactions from "@/pages/ClientTransaction";
 
-const router = createBrowserRouter([
+const routerConfig: RouteObject[] = [
   // Landing Page
   {
     path: "/",
@@ -77,6 +77,6 @@ const router = createBrowserRouter([
       },
     ],
   },
-]);
+];
 
-export default router;
+export default createBrowserRouter(routerConfig);
