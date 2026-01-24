@@ -48,35 +48,36 @@ export default function ClientTransactions() {
     "unpaid",
   );
 
+  const fetchAndProcessData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [transactionsResponse, motorsResponse] = await Promise.all([
+        backendApi.get<Transaction[]>("/rental"),
+        backendApi.get<Motor[]>("/motor"),
+      ]);
+
+      const transactionsData = transactionsResponse.data;
+      const motorsData = motorsResponse.data;
+      const motorsMap = new Map(motorsData.map((m) => [m._id, m]));
+
+      const enrichedTransactions: EnrichedTransaction[] = transactionsData.map(
+        (trx) => ({
+          ...trx,
+          motor: motorsMap.get(trx.motor_id),
+        }),
+      );
+
+      setTransactions(enrichedTransactions);
+    } catch (err) {
+      console.error("Failed to fetch transaction data:", err);
+      setError("Gagal memuat data transaksi. Coba lagi nanti.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchAndProcessData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const [transactionsResponse, motorsResponse] = await Promise.all([
-          backendApi.get<Transaction[]>("/rental"),
-          backendApi.get<Motor[]>("/motor"),
-        ]);
-
-        const transactionsData = transactionsResponse.data;
-        const motorsData = motorsResponse.data;
-        const motorsMap = new Map(motorsData.map((m) => [m._id, m]));
-
-        const enrichedTransactions: EnrichedTransaction[] =
-          transactionsData.map((trx) => ({
-            ...trx,
-            motor: motorsMap.get(trx.motor_id),
-          }));
-
-        setTransactions(enrichedTransactions);
-      } catch (err) {
-        console.error("Failed to fetch transaction data:", err);
-        setError("Gagal memuat data transaksi. Coba lagi nanti.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchAndProcessData();
   }, []);
 
@@ -141,6 +142,7 @@ export default function ClientTransactions() {
       alert("Gagal melakukan pembayaran. Coba lagi nanti.");
       throw new Error("Gagal melakukan pembayaran. Coba lagi nanti.");
     } finally {
+      fetchAndProcessData();
       setLoading(false);
     }
   };
@@ -214,7 +216,9 @@ export default function ClientTransactions() {
               <Motorbike className="text-orange-400" size={32} />
             </div>
             <h3 className="font-bold text-slate-600">Belum ada transaksi</h3>
-            <p className="text-sm text-slate-400">Lu jalan kaki terus ya?</p>
+            <p className="text-sm text-slate-400">
+              Anda memiliki gaya hidup sehat... 👍🏻
+            </p>
           </div>
         ) : (
           transactions.map((trx) => (

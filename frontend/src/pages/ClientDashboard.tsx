@@ -3,6 +3,7 @@ import { Search, Filter, RefreshCcw, AlertTriangle } from "lucide-react";
 import { backendApi } from "@/libs/apiInterface";
 import MotorCard from "@/components/modules/MotorCard";
 import Button from "@/components/commons/Button";
+import RentModal from "@/components/modules/RentModal";
 
 interface Motor {
   _id: string;
@@ -23,6 +24,7 @@ export default function ClientDashboard() {
   const [filterType, setFilterType] = useState<
     "all" | "available" | "not_available"
   >("all");
+  const [selectedMotor, setSelectedMotor] = useState<Motor | null>(null);
 
   const fetchMotors = async () => {
     setLoading(true);
@@ -54,9 +56,35 @@ export default function ClientDashboard() {
   });
 
   // Handler Sewa
-  const handleRent = (id: string) => {
-    console.log("Booking ID:", id);
-    alert(`Request booking motor ID ${id} dikirim ke server!`);
+  const handleRent = (motor: Motor) => {
+    setSelectedMotor(motor);
+  };
+
+  const handleRentSubmit = async (motorId: string, duration: number) => {
+    console.log("Processing Rent Transaction...");
+
+    try {
+      const response = await backendApi.post("/rental", {
+        motor_id: motorId,
+        duration_hours: duration,
+      });
+
+      if (response.status === 201) {
+        console.log("Transaction Success:", response.data.message);
+        alert(response.data.message);
+      }
+    } catch (err) {
+      console.error("Transaction Error:", err);
+
+      alert("Gagal sewa motor. Coba lagi nanti.");
+      throw new Error("Gagal sewa motor. Coba lagi nanti.");
+    }
+
+    // Buat nge fetch motor lagi
+    fetchMotors();
+
+    // Tutup modal (popup)
+    setSelectedMotor(null);
   };
 
   return (
@@ -196,12 +224,18 @@ export default function ClientDashboard() {
                 license_plate={motor.license_plate}
                 rent_price={motor.rent_price}
                 status={motor.status}
-                onRent={() => handleRent(motor._id)}
+                onRent={() => handleRent(motor)}
               />
             ))}
           </div>
         )}
       </div>
+      <RentModal
+        isOpen={!!selectedMotor}
+        motor={selectedMotor}
+        onClose={() => setSelectedMotor(null)}
+        onConfirm={handleRentSubmit}
+      />
     </div>
   );
 }
