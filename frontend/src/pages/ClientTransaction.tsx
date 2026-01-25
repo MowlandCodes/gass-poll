@@ -273,13 +273,13 @@ export default function ClientTransactions() {
                 </div>
 
                 {trx.payment_status === "unpaid" ? (
-                  <Button size="sm" className="w-full md:w-auto">
+                  <Button size="md" className="w-full md:w-auto">
                     Bayar
                   </Button>
                 ) : (
                   <Button
                     variant="secondary"
-                    size="sm"
+                    size="md"
                     className="w-full md:w-auto text-slate-400"
                   >
                     Detail
