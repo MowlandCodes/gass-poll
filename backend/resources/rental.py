@@ -66,7 +66,14 @@ class RentalList(Resource):
         current_user = db.users.find_one({"_id": ObjectId(current_user_id)})
         is_admin = current_user and current_user.get("role") == "admin"
 
-        # Get Query parameter of user_id
+        # ?page=1&limit=10
+        try:
+            page = int(request.args.get("page", 1))
+            limit = int(request.args.get("limit", 10))
+        except ValueError:
+            page = 1
+            limit = 10
+
         user_id_query = request.args.get("user_id")
         query = {}
         if is_admin and user_id_query:
@@ -77,9 +84,37 @@ class RentalList(Resource):
         else:
             query["user_id"] = ObjectId(current_user_id)
 
-        rental_bills = db.rental_bills.find(query)
+        # Hitung Total Data & Total Unpaid
+        unpaid_pipeline = [
+            {"$match": {**query, "payment_status": "unpaid"}},
+            {"$group": {"_id": None, "total": {"$sum": "$total_price"}}},
+        ]
+        unpaid_result = list(db.rental_bills.aggregate(unpaid_pipeline))
+        total_unpaid = unpaid_result[0]["total"] if unpaid_result else 0
+
+        # Hitung jumlah dokumen buat pagination info
+        total_items = db.rental_bills.count_documents(query)
+        total_pages = (total_items + limit - 1) // limit
+
+        # Ambil Data Transaksi (Paginated & Sorted (yang terbaru harusnya di atas))
+        skip = (page - 1) * limit
+        rental_bills = (
+            db.rental_bills.find(query).sort("_id", -1).skip(skip).limit(limit)
+        )
+
         rental_list = [serialize_doc(rental) for rental in rental_bills]
-        return rental_list, 200
+
+        # Response Terstruktur
+        return {
+            "data": rental_list,
+            "meta": {
+                "page": page,
+                "limit": limit,
+                "total_items": total_items,
+                "total_pages": total_pages,
+                "total_unpaid": total_unpaid,
+            },
+        }, 200
 
 
 class RentalDetail(Resource):
