@@ -7,6 +7,7 @@ import {
   Motorbike,
 } from "lucide-react";
 import Button from "@/components/commons/Button";
+import Pagination from "@/components/commons/Pagination";
 import { backendApi } from "@/libs/apiInterface";
 
 interface Transaction {
@@ -40,25 +41,51 @@ interface PayAllStatus {
   message: string;
 }
 
+interface TransactionResponse {
+  data: Transaction[];
+  meta: {
+    page: number;
+    limit: number;
+    total_items: number;
+    total_pages: number;
+    total_unpaid: number;
+  };
+}
+
 export default function ClientTransactions() {
   const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState<EnrichedTransaction[]>([]);
   const [error, setError] = useState<string | null>(null);
+
+  const [page, setPage] = useState(1);
+  const [paginationMeta, setPaginationMeta] = useState({
+    total_pages: 1,
+    total_unpaid: 0,
+  });
+
   const [paymentStatus, setPaymentStatus] = useState<"unpaid" | "paid">(
     "unpaid",
   );
 
-  const fetchAndProcessData = async () => {
+  const fetchAndProcessData = async (currentPage = page, limit = 5) => {
     setLoading(true);
     setError(null);
     try {
       const [transactionsResponse, motorsResponse] = await Promise.all([
-        backendApi.get<Transaction[]>("/rental"),
+        backendApi.get<TransactionResponse>(
+          `/rental?page=${currentPage}&limit=${limit}`,
+        ),
         backendApi.get<Motor[]>("/motor"),
       ]);
 
-      const transactionsData = transactionsResponse.data;
+      const { data: transactionsData, meta } = transactionsResponse.data;
       const motorsData = motorsResponse.data;
+
+      setPaginationMeta({
+        total_pages: meta.total_pages,
+        total_unpaid: meta.total_unpaid,
+      });
+
       const motorsMap = new Map(motorsData.map((m) => [m._id, m]));
 
       const enrichedTransactions: EnrichedTransaction[] = transactionsData.map(
@@ -78,12 +105,15 @@ export default function ClientTransactions() {
   };
 
   useEffect(() => {
-    fetchAndProcessData();
-  }, []);
+    fetchAndProcessData(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page]);
 
-  const totalUnpaid = transactions
-    .filter((t) => t.payment_status === "unpaid")
-    .reduce((sum, t) => sum + t.total_price, 0);
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const totalUnpaid = paginationMeta.total_unpaid;
 
   // --- HELPERS ---
   const getStatusColor = (paymentStatus: "unpaid" | "paid") => {
@@ -142,7 +172,8 @@ export default function ClientTransactions() {
       alert("Gagal melakukan pembayaran. Coba lagi nanti.");
       throw new Error("Gagal melakukan pembayaran. Coba lagi nanti.");
     } finally {
-      fetchAndProcessData();
+      // Balik lagi ke page 1
+      fetchAndProcessData(1);
       setLoading(false);
     }
   };
@@ -221,73 +252,83 @@ export default function ClientTransactions() {
             </p>
           </div>
         ) : (
-          transactions.map((trx) => (
-            <div
-              key={trx._id}
-              className="bg-white border border-slate-100 rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col md:flex-row gap-6 items-center"
-            >
-              <div className="w-full md:w-32 h-24 bg-slate-100 rounded-xl overflow-hidden shrink-0 relative">
-                <img
-                  src={getMotorImageUrl(trx.motor?.image)}
-                  alt={trx.motor?.name || "Motor Image"}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute bottom-0 left-0 w-full bg-black/50 text-white text-[10px] p-1 text-center font-mono backdrop-blur-sm">
-                  {trx.motor?.license_plate || "N/A"}
-                </div>
-              </div>
-
-              <div className="flex-1 w-full text-center md:text-left">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-2">
-                  <h4 className="font-bold text-lg text-slate-800">
-                    {trx.motor?.name || "Motor Tidak Dikenal"}
-                  </h4>
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${getStatusColor(trx.payment_status)}`}
-                  >
-                    {getStatusLabel(trx.payment_status)}
-                  </span>
-                </div>
-
-                <div className="flex flex-col md:flex-row gap-4 text-sm text-slate-500 mt-2 justify-center md:justify-start">
-                  <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-                    <Calendar size={14} className="text-orange-500" />
-                    {formatDate(trx.rent_start)}{" "}
-                    <span className="text-slate-300">s/d</span>{" "}
-                    {formatDate(trx.rent_end)}
+          <div className="flex flex-col justify-between space-y-4">
+            <div>
+              {transactions.map((trx) => (
+                <div
+                  key={trx._id}
+                  className="bg-white border border-slate-100 rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col md:flex-row gap-6 items-center"
+                >
+                  <div className="w-full md:w-32 h-24 bg-slate-100 rounded-xl overflow-hidden shrink-0 relative">
+                    <img
+                      src={getMotorImageUrl(trx.motor?.image)}
+                      alt={trx.motor?.name || "Motor Image"}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute bottom-0 left-0 w-full bg-black/50 text-white text-[10px] p-1 text-center font-mono backdrop-blur-sm">
+                      {trx.motor?.license_plate || "N/A"}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-mono text-xs opacity-50">
-                      #{trx._id.substring(0, 7)}
-                    </span>
+
+                  <div className="flex-1 w-full text-center md:text-left">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-2">
+                      <h4 className="font-bold text-lg text-slate-800">
+                        {trx.motor?.name || "Motor Tidak Dikenal"}
+                      </h4>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${getStatusColor(trx.payment_status)}`}
+                      >
+                        {getStatusLabel(trx.payment_status)}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row gap-4 text-sm text-slate-500 mt-2 justify-center md:justify-start">
+                      <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
+                        <Calendar size={14} className="text-orange-500" />
+                        {formatDate(trx.rent_start)}{" "}
+                        <span className="text-slate-300">s/d</span>{" "}
+                        {formatDate(trx.rent_end)}
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-mono text-xs opacity-50">
+                          #{trx._id.substring(0, 7)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-row md:flex-col items-center justify-between w-full md:w-auto gap-4 border-t md:border-t-0 border-slate-100 pt-4 md:pt-0">
+                    <div className="text-right">
+                      <p className="text-xs text-slate-400">Total Harga</p>
+                      <p className="text-xl font-black text-slate-800">
+                        Rp {trx.total_price.toLocaleString("id-ID")}
+                      </p>
+                    </div>
+
+                    {trx.payment_status === "unpaid" ? (
+                      <Button size="md" className="w-full md:w-auto">
+                        Bayar
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="secondary"
+                        size="md"
+                        className="w-full md:w-auto text-slate-400"
+                      >
+                        Detail
+                      </Button>
+                    )}
                   </div>
                 </div>
-              </div>
-
-              <div className="flex flex-row md:flex-col items-center justify-between w-full md:w-auto gap-4 border-t md:border-t-0 border-slate-100 pt-4 md:pt-0">
-                <div className="text-right">
-                  <p className="text-xs text-slate-400">Total Harga</p>
-                  <p className="text-xl font-black text-slate-800">
-                    Rp {trx.total_price.toLocaleString("id-ID")}
-                  </p>
-                </div>
-
-                {trx.payment_status === "unpaid" ? (
-                  <Button size="md" className="w-full md:w-auto">
-                    Bayar
-                  </Button>
-                ) : (
-                  <Button
-                    variant="secondary"
-                    size="md"
-                    className="w-full md:w-auto text-slate-400"
-                  >
-                    Detail
-                  </Button>
-                )}
-              </div>
+              ))}
             </div>
-          ))
+            <Pagination
+              currentPage={page}
+              totalPages={paginationMeta.total_pages}
+              onPageChange={handlePageChange}
+              isLoading={loading}
+            />
+          </div>
         )}
       </div>
     </div>
