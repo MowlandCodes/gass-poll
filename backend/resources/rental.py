@@ -81,6 +81,8 @@ class RentalList(Resource):
                 query["user_id"] = ObjectId(user_id_query)
             except:
                 return {"message": "Invalid user ID!"}, 400
+        elif is_admin and not user_id_query:
+            pass
         else:
             query["user_id"] = ObjectId(current_user_id)
 
