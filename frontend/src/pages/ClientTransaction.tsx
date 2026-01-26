@@ -122,7 +122,6 @@ export default function ClientTransactions() {
 
   const totalUnpaid = paginationMeta.total_unpaid;
 
-  // --- HELPERS ---
   const getStatusColor = (paymentStatus: "unpaid" | "paid") => {
     switch (paymentStatus) {
       case "unpaid":
@@ -175,6 +174,26 @@ export default function ClientTransactions() {
       }
     } catch (err) {
       console.error("Failed to pay all transactions:", err);
+
+      alert("Gagal melakukan pembayaran. Coba lagi nanti.");
+      throw new Error("Gagal melakukan pembayaran. Coba lagi nanti.");
+    } finally {
+      // Balik lagi ke page 1
+      fetchAndProcessData(1);
+      setLoading(false);
+    }
+  };
+
+  const handleBayarSingle = async (trxId: string) => {
+    setLoading(true);
+    try {
+      const response = await backendApi.post(`/rental/${trxId}/pay`);
+
+      if (response.status === 200) {
+        alert(response.data.message);
+      }
+    } catch (err) {
+      console.error("Failed to pay single transaction:", err);
 
       alert("Gagal melakukan pembayaran. Coba lagi nanti.");
       throw new Error("Gagal melakukan pembayaran. Coba lagi nanti.");
@@ -313,7 +332,11 @@ export default function ClientTransactions() {
                     </div>
 
                     {trx.payment_status === "unpaid" ? (
-                      <Button size="md" className="w-full md:w-auto">
+                      <Button
+                        size="md"
+                        className="w-full md:w-auto"
+                        onClick={() => handleBayarSingle(trx._id)}
+                      >
                         Bayar
                       </Button>
                     ) : (
