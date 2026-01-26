@@ -150,8 +150,8 @@ class RentalPayment(Resource):
             rental_bill = db.rental_bills.find_one({"_id": ObjectId(rental_id)})
 
             # Kalo rental bill valid, ambil motor id nya
-            motor_id = rental_bill and rental_bill.get("motor_id", None)
-            user_id = rental_bill and rental_bill.get("user_id", None)
+            motor_id = rental_bill and str(rental_bill.get("motor_id", None))
+            user_id = rental_bill and str(rental_bill.get("user_id", None))
             payment_status = rental_bill and rental_bill.get("payment_status", None)
         except:
             return {"message": "Invalid rental ID!"}, 400
@@ -177,7 +177,9 @@ class RentalPayment(Resource):
         )
 
         # Ubah lagi status motor nya jadi available
-        db.motor.update_one({"_id": motor_id}, {"$set": {"status": "available"}})
+        db.motor.update_one(
+            {"_id": ObjectId(motor_id)}, {"$set": {"status": "available"}}
+        )
 
         return {"message": "Rental bill payment successful."}, 200
 
