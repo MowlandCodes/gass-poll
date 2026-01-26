@@ -183,6 +183,12 @@ class RentalPayment(Resource):
             {"_id": ObjectId(motor_id)}, {"$set": {"status": "available"}}
         )
 
+        # Ubah status transaksi motor nya jadi completed
+        db.rental_bills.update_one(
+            {"_id": ObjectId(rental_bill.get("_id", ""))},
+            {"$set": {"status": "completed"}},
+        )
+
         return {"message": "Rental bill payment successful."}, 200
 
 
@@ -200,8 +206,18 @@ class RentalPayAll(Resource):
 
         try:
             result = db.rental_bills.update_many(
-                {"user_id": ObjectId(current_user_id), "payment_status": "unpaid"},
-                {"$set": {"payment_status": "paid", "paid_at": datetime.now()}},
+                {
+                    "user_id": ObjectId(current_user_id),
+                    "payment_status": "unpaid",
+                    "status": "ongoing",
+                },
+                {
+                    "$set": {
+                        "payment_status": "paid",
+                        "status": "completed",
+                        "paid_at": datetime.now(),
+                    }
+                },
             )
 
             # Update semua motor yang dibayar, ubah status nya jadi available
