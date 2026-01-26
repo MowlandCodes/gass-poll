@@ -4,7 +4,6 @@ import {
   LayoutDashboard,
   Bike,
   Users,
-  Settings,
   LogOut,
   Menu,
   X,
@@ -38,11 +37,6 @@ export default function AdminLayout() {
     },
     { label: "Manage Motor", path: "/admin/motors", icon: <Bike size={20} /> },
     { label: "Manage Users", path: "/admin/users", icon: <Users size={20} /> },
-    {
-      label: "System Config",
-      path: "/admin/settings",
-      icon: <Settings size={20} />,
-    },
   ];
 
   if (isLoggingOut) {
@@ -106,7 +100,6 @@ export default function AdminLayout() {
                             }
                         `}
               >
-                {/* Aksen kecil kalo aktif */}
                 {isActive && (
                   <div className="absolute left-0 top-0 h-full w-1 bg-white/20"></div>
                 )}
@@ -185,7 +178,6 @@ export default function AdminLayout() {
         </main>
       </div>
 
-      {/* Overlay Gelap (Mobile Only) */}
       {isSidebarOpen && (
         <div
           onClick={() => setSidebarOpen(false)}
