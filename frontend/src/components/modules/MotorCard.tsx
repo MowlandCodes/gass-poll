@@ -28,7 +28,9 @@ export default function MotorCard({
 
   const getMotorImage = (path: string | undefined) => {
     if (!path) return "https://placehold.co/600x400/EEE/31343C?text=N/A";
-    return `${import.meta.env.VITE_BASE_API_URL}/${path}`;
+    return path.startsWith("http")
+      ? path
+      : `${import.meta.env.VITE_BASE_API_URL}/${path}`;
   };
 
   return (
