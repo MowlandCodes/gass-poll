@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import Button from "@/components/commons/Button";
 import Pagination from "@/components/commons/Pagination";
+import TransactionDetailModal from "@/components/modules/TransactionDetailModal";
 import { backendApi } from "@/libs/apiInterface";
 
 interface Transaction {
@@ -55,6 +56,8 @@ interface TransactionResponse {
 export default function ClientTransactions() {
   const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState<EnrichedTransaction[]>([]);
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<EnrichedTransaction | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const [page, setPage] = useState(1);
@@ -111,6 +114,10 @@ export default function ClientTransactions() {
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
+  };
+
+  const handleShowDetail = (trx: EnrichedTransaction) => {
+    setSelectedTransaction(trx);
   };
 
   const totalUnpaid = paginationMeta.total_unpaid;
@@ -313,7 +320,8 @@ export default function ClientTransactions() {
                       <Button
                         variant="secondary"
                         size="md"
-                        className="w-full md:w-auto text-slate-400"
+                        className="w-full md:w-auto text-slate-400 hover:text-slate-600"
+                        onClick={() => handleShowDetail(trx)}
                       >
                         Detail
                       </Button>
@@ -331,6 +339,12 @@ export default function ClientTransactions() {
           </div>
         )}
       </div>
+
+      <TransactionDetailModal
+        isOpen={!!selectedTransaction}
+        transaction={selectedTransaction}
+        onClose={() => setSelectedTransaction(null)}
+      />
     </div>
   );
 }
