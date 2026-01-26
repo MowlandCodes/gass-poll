@@ -140,7 +140,7 @@ export default function AdminLayout() {
               size={16}
               className="group-hover:-translate-x-1 transition-transform"
             />
-            Kill Session
+            Logout
           </button>
         </div>
       </aside>

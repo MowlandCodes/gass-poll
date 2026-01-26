@@ -11,6 +11,7 @@ import AdminRoute from "./AdminRoute";
 import AdminLayout from "@/layouts/AdminLayout";
 import ClientDashboard from "@/pages/ClientDashboard";
 import ClientTransactions from "@/pages/ClientTransaction";
+import AdminDashboard from "@/pages/admin/Dashboard";
 
 const routerConfig: RouteObject[] = [
   // Landing Page
@@ -71,7 +72,7 @@ const routerConfig: RouteObject[] = [
         children: [
           {
             path: "dashboard",
-            element: <div>Dashboard Admin</div>,
+            element: <AdminDashboard />,
           },
         ],
       },
