@@ -2,6 +2,29 @@ import { useEffect, useState } from "react";
 import { Users, Bike, AlertCircle, DollarSign, Activity } from "lucide-react";
 import { backendApi } from "@/libs/apiInterface";
 
+interface Transaction {
+  _id: string;
+  user_id: string;
+  motor_id: string;
+  rent_start: string;
+  rent_end: string;
+  created_at: string;
+  total_price: number;
+  payment_status: "unpaid" | "paid";
+  status: "ongoing" | "completed";
+}
+
+interface TransactionMeta {
+  data: Transaction[];
+  meta: {
+    page: number;
+    limit: number;
+    total_items: number;
+    total_pages: number;
+    total_unpaid: number;
+  };
+}
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
     users: 0,
@@ -10,18 +33,73 @@ export default function AdminDashboard() {
     active_rentals: 0,
   });
 
+  const calculateRevenue = async (trx: TransactionMeta): Promise<number> => {
+    // check whether the default limit didn't get all the data
+    if (trx.meta.limit < trx.meta.total_items) {
+      try {
+        const res = await backendApi.get<TransactionMeta>(
+          `/rental?limit=${trx.meta.total_items}`,
+        );
+
+        // Recursively calculate the revenue
+        return await calculateRevenue(res.data);
+      } catch (err) {
+        console.error("Error calculating revenue:", err);
+        return 0;
+      }
+    }
+
+    // ALl the paid and completed transactions
+    const paidTransactions = trx.data.filter(
+      (trx) => trx.payment_status === "paid" && trx.status === "completed",
+    );
+
+    const totalRevenue = paidTransactions.reduce((accumulated, trx) => {
+      return accumulated + trx.total_price;
+    }, 0);
+
+    return totalRevenue + trx.meta.total_unpaid;
+  };
+
+  const calculateActiveRentals = async (
+    trx: TransactionMeta,
+  ): Promise<number> => {
+    // check whether the default limit didn't get all the data
+    if (trx.meta.limit < trx.meta.total_items) {
+      try {
+        const res = await backendApi.get<TransactionMeta>(
+          `/rental?limit=${trx.meta.total_items}`,
+        );
+
+        return await calculateActiveRentals(res.data);
+      } catch (err) {}
+    }
+
+    const activeTransactions = trx.data.filter(
+      (trx) => trx.status === "ongoing" && trx.payment_status === "unpaid",
+    );
+
+    return activeTransactions.length;
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [usersRes, motorsRes] = await Promise.all([
+        const [usersRes, motorsRes, trxRes] = await Promise.all([
           backendApi.get("/users"),
           backendApi.get("/motor"),
+          backendApi.get<TransactionMeta>("/rental"),
         ]);
+
+        const revenue = await calculateRevenue(trxRes.data);
+        const activeRentals = await calculateActiveRentals(trxRes.data);
 
         setStats((prev) => ({
           ...prev,
           users: usersRes.data.length,
           motors: motorsRes.data.length,
+          revenue,
+          active_rentals: activeRentals,
         }));
       } catch (err) {
         console.error("Dashboard Glitch:", err);
@@ -50,7 +128,7 @@ export default function AdminDashboard() {
       color: "bg-green-500",
     },
     {
-      label: "Active Sessions",
+      label: "Active Rentals",
       value: stats.active_rentals,
       icon: <Activity size={24} />,
       color: "bg-purple-500",
