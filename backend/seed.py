@@ -92,31 +92,6 @@ def database_first():
     db.motor.insert_many(motors_to_seed)
     print(f"-> Seeded {len(motors_to_seed)} motors.")
 
-    # --- Rental Bills ---
-    # Create a rental for John Doe with the Yamaha NMAX
-    user_john = db.users.find_one({"email": "johndoe@example.com"})
-    motor_nmax = db.motor.find_one({"name": "Yamaha NMAX"})
-
-    if user_john and motor_nmax:
-        rent_start = datetime.now() - timedelta(days=2)
-        duration_hours = 48
-        rent_end = rent_start + timedelta(hours=duration_hours)
-        total_price = motor_nmax["rent_price"] * (duration_hours / 24)
-
-        rental_bill = {
-            "user_id": user_john["_id"],
-            "motor_id": motor_nmax["_id"],
-            "rent_start": rent_start,
-            "rent_end": rent_end,
-            "created_at": rent_start,
-            "total_price": total_price,
-            "payment_status": "paid",
-            "status": "completed",
-            "paid_at": rent_start + timedelta(minutes=15),
-        }
-        db.rental_bills.insert_one(rental_bill)
-        print("-> Seeded 1 sample rental bill.")
-
     print("Database seeding completed successfully!")
 
 

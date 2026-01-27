@@ -31,6 +31,7 @@ def validate_motors(
         image_url.endswith(".png")
         or image_url.endswith(".jpg")
         or image_url.endswith(".jpeg")
+        or image_url.endswith(".webp")
     )
     if not valid_image:
         return False, "Image URL is not valid"
