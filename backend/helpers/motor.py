@@ -24,7 +24,9 @@ def validate_motors(
         return False, "License Plate is not valid"
 
     valid_image = (
-        image_url.startswith("https://") or image_url.startswith("http://")
+        image_url.startswith("https://")
+        or image_url.startswith("http://")
+        or image_url.startswith("public/")
     ) and (
         image_url.endswith(".png")
         or image_url.endswith(".jpg")
