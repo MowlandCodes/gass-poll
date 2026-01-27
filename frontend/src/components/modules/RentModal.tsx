@@ -41,6 +41,13 @@ export default function BookingModal({
     }
   };
 
+  const getImageUrl = (path: string | undefined) => {
+    if (!path) return "https://placehold.co/600x400/EEE/31343C?text=N/A";
+    return path.startsWith("http")
+      ? path
+      : `${import.meta.env.VITE_BASE_API_URL}/${path}`;
+  };
+
   if (!isOpen || !motor) return null;
 
   return (
@@ -69,7 +76,7 @@ export default function BookingModal({
           <div className="flex gap-4 items-center">
             <div className="w-20 h-20 bg-slate-100 rounded-lg overflow-hidden shrink-0 border border-slate-200">
               <img
-                src={`${import.meta.env.VITE_BASE_API_URL}/${motor.image}`}
+                src={getImageUrl(motor.image)}
                 alt={motor.name}
                 className="w-full h-full object-cover"
               />

@@ -76,7 +76,7 @@ def database_first():
             "brand": "Suzuki",
             "license_plate": "F 9101 GHI",
             "rent_price": 8500,
-            "status": "not_available",
+            "status": "available",
             "image": "public/suzuki-burgman.webp",
         },
         {
