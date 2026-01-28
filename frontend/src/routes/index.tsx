@@ -14,6 +14,7 @@ import ClientTransactions from "@/pages/ClientTransaction";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import ManageMotors from "@/pages/admin/ManageMotors";
 import ManageUsers from "@/pages/admin/ManageUsers";
+import About from "@/pages/About";
 
 const routerConfig: RouteObject[] = [
   // Landing Page
@@ -25,6 +26,10 @@ const routerConfig: RouteObject[] = [
       {
         index: true,
         element: <LandingPage />,
+      },
+      {
+        path: "about",
+        element: <About />,
       },
     ],
   },
