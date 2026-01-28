@@ -12,22 +12,22 @@
 > **"Coding itu gampang, yang susah itu ngertiin kode orang lain."**
 > — _Quote Legend di Halaman Login GASS-POLL._
 
-**GASS-POLL** adalah platform penyewaan motor paling _sat-set_ yang didesain dengan tampilan futuristik dan fungsional. Sistem ini memisahkan kasta akses menjadi dua: **Admin Panel** untuk kontrol penuh armada, dan **User Interface** untuk kemudahan peminjaman.
+**GASS-POLL** adalah platform penyewaan motor paling _sat-set_ yang didesain dengan tampilan yang simple tapi fungsional. Sistem ini memisahkan hak akses menjadi dua: **Admin Panel** untuk kontrol penuh admin, dan **Client Dashboard** untuk kemudahan peminjaman.
 
 ---
 
 ## ⚡ Fitur Utama (Core Features)
 
-### 👑 Kasta Admin (The Garage Master)
+### 👑 Admin Dashboard
 
-Tempat kendali utama buat sang pemilik armada:
+Tempat kendali utama buat sang pemilik usaha rental:
 
 - **System Monitoring:** Cek jumlah user, total armada, dan perputaran uang secara real-time.
 - **System Logs:** Pantau kesehatan database dan log aktivitas server langsung dari dashboard.
 - **Inventory Control:** Update status motor (`Available`/`Unavailable`), ubah harga sewa, atau tambah stok motor baru.
 - **User Management:** Monitoring database mahasiswa yang sudah terdaftar dalam sistem.
 
-### 👤 Kasta User (The Campus Rider)
+### 👤 User Dashboard
 
 Didesain buat kenyamanan mobilitas harian:
 
@@ -85,7 +85,7 @@ Pusat komando manajemen sistem GASS-POLL:
 
 ---
 
-## 🛠️ Jeroan Mesin (Tech Stack)
+## 🛠️ Tech Stack
 
 - **Frontend:** `React` + `Vite` + `TypeScript`.
 - **Runtime:** `Bun` (Package manager & runtime super cepat).
@@ -96,6 +96,6 @@ Pusat komando manajemen sistem GASS-POLL:
 
 ## 👤 Contributor
 
-- M.Faridh Maulana {Frontend-Developer}
-- Naufal Razzaq Muafa {Backend-Developer}
-- Muhammad Dafi Al Haq {Documentator}
+- M.Faridh Maulana `Full-Stack Developer`
+- Naufal Razzaq Muafa `Backend Developer`
+- Muhammad Dafi Al Haq `Documentator`
