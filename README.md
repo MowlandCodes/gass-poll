@@ -41,7 +41,7 @@ Didesain buat kenyamanan mobilitas harian:
 
 ### 🚀 Access & Landing Page
 
-Gerbang utama masuk ke ekosistem GASSPOL:
+Gerbang utama masuk ke ekosistem GASS-POLL:
 
 <div align="center">
   <img src="assets/landing.jpg" width="90%" alt="Landing Page" />
@@ -70,7 +70,7 @@ Katalog motor dan sistem pemantauan tagihan:
 
 ### 🛠️ Admin Authority
 
-Pusat komando manajemen sistem GASSPOL:
+Pusat komando manajemen sistem GASS-POLL:
 
 <div align="center">
   <img src="assets/dashboard-admin.jpg" width="90%" alt="Admin Dashboard" />
