@@ -10,7 +10,7 @@
 <br />
 
 > **"Coding itu gampang, yang susah itu ngertiin kode orang lain."**
-> — _Quote Legend di Halaman Login GASSPOL._
+> — _Quote Legend di Halaman Login GASS-POLL._
 
 **GASS-POLL** adalah platform penyewaan motor paling _sat-set_ yang didesain dengan tampilan futuristik dan fungsional. Sistem ini memisahkan kasta akses menjadi dua: **Admin Panel** untuk kontrol penuh armada, dan **User Interface** untuk kemudahan peminjaman.
 
