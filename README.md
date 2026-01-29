@@ -94,8 +94,49 @@ Pusat komando manajemen sistem GASS-POLL:
 
 ---
 
+## 🚀 Running the App
+
+### 👨🏼‍🍳 Backend (Flask)
+
+```bash
+# Jalankan command berikut dan pastikan "uv" telah terinstall di system
+# Jika belum jalankan command berikut:
+
+# Windows:
+# powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# Linux / MacOS:
+# curl -LsSf https://astral.sh/uv/install.sh | sh
+
+cd backend # Pindah ke direktori backend
+
+uv sync # Install semua dependensi dari Backend
+uv run seed.py # Lakukan seeding ke database
+uv run main.py # Jalankan aplikasi utama
+```
+
+### 🚪 Frontend (React + Vite)
+
+```bash
+# Pastikan bun telah ter-install di system
+# Jika belum, install dengan command berikut:
+
+# Windows:
+# powershell -c "irm bun.sh/install.ps1 | iex"
+
+# Linux / MacOS:
+# curl -fsSL https://bun.sh/install | bash
+
+cd frontend
+
+bun i # Install seluruh dependensi
+bun dev # Jalankan aplikasi utama
+```
+
+---
+
 ## 👤 Contributor
 
-- M.Faridh Maulana `Full-Stack Developer`
+- M. Faridh Maulana `Full-Stack Developer`
 - Naufal Razzaq Muafa `Backend Developer`
 - Muhammad Dafi Al Haq `Documentator`
