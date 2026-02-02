@@ -1,6 +1,7 @@
 from email.mime import image
 from libs.connection import db
 import bcrypt
+from bson import ObjectId
 
 
 def hash_password(password):
