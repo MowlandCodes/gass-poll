@@ -26,6 +26,16 @@ export default function MotorCard({
     }
   };
 
+<<<<<<< HEAD
+=======
+  const getMotorImage = (path: string | undefined) => {
+    if (!path) return "https://placehold.co/600x400/EEE/31343C?text=N/A";
+    return path.startsWith("http")
+      ? path
+      : `${import.meta.env.VITE_BASE_API_URL}/${path}`;
+  };
+
+>>>>>>> 712b086c5f7eda13cc581a40b41098a0e1ce5f16
   return (
     <div className="group bg-white rounded-2xl border border-orange-100 shadow-sm hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 overflow-hidden flex flex-col h-full">
       <div className="relative aspect-4/3 overflow-hidden bg-gray-100">
@@ -60,7 +70,7 @@ export default function MotorCard({
             <span className="text-xs text-slate-400">Harga Sewa</span>
             <span className="text-lg font-black text-brand-600">
               Rp {rent_price.toLocaleString("id-ID")}
-              <span className="text-xs font-normal text-slate-400">/hari</span>
+              <span className="text-xs font-normal text-slate-400">/jam</span>
             </span>
           </div>
 

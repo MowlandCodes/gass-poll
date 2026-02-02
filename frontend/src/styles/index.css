@@ -7,4 +7,29 @@
   --color-brand-500: #f97316;
   --color-brand-600: #ea580c;
   --font-poppins: "Poppins", sans-serif;
+
+  --animate-fade-in: fade-in 0.2s ease-out forwards;
+  --animate-pop-up: pop-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes pop-up {
+    0% {
+      opacity: 0;
+      transform: scale(0.95) translateY(10px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
 }

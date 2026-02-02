@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, type RouteObject } from "react-router-dom";
 import MainLayout from "@/layouts/MainLayout";
 import LandingPage from "@/pages/LandingPage";
 import NotFound from "@/pages/404";
@@ -7,12 +7,16 @@ import GuestRoute from "@/routes/GuestRoute";
 import ProtectedRoute from "@/routes/ProtectedRoute";
 import Register from "@/pages/Register";
 import ClientLayout from "@/layouts/ClientLayout";
-import AdminRoute from "./AdminRoute";
+import AdminRoute from "@/routes/AdminRoute";
 import AdminLayout from "@/layouts/AdminLayout";
 import ClientDashboard from "@/pages/ClientDashboard";
 import ClientTransactions from "@/pages/ClientTransaction";
+import AdminDashboard from "@/pages/admin/Dashboard";
+import ManageMotors from "@/pages/admin/ManageMotors";
+import ManageUsers from "@/pages/admin/ManageUsers";
+import About from "@/pages/About";
 
-const router = createBrowserRouter([
+const routerConfig: RouteObject[] = [
   // Landing Page
   {
     path: "/",
@@ -22,6 +26,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <LandingPage />,
+      },
+      {
+        path: "about",
+        element: <About />,
       },
     ],
   },
@@ -71,12 +79,20 @@ const router = createBrowserRouter([
         children: [
           {
             path: "dashboard",
-            element: <div>Dashboard Admin</div>,
+            element: <AdminDashboard />,
+          },
+          {
+            path: "motors",
+            element: <ManageMotors />,
+          },
+          {
+            path: "users",
+            element: <ManageUsers />,
           },
         ],
       },
     ],
   },
-]);
+];
 
-export default router;
+export default createBrowserRouter(routerConfig);

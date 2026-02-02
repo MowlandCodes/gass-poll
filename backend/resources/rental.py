@@ -29,7 +29,7 @@ class RentalList(Resource):
             return {"message": "Motor not found!"}, 404
 
         if motor["status"] != "available":
-            return {"message": "Motor Unavailable or Rented!"}, 400
+            return {"message": "Motor Unavailable or Rented!"}, 404
 
         duration_hours = int(data.get("duration_hours") or 24)
         rent_start = datetime.now()
@@ -65,6 +65,7 @@ class RentalList(Resource):
         current_user = db.users.find_one({"_id": ObjectId(current_user_id)})
         is_admin = current_user and current_user.get("role") == "admin"
 
+<<<<<<< HEAD
         user_id_query = request.args.get("user_id")
         query = {}
         if is_admin:
@@ -73,12 +74,59 @@ class RentalList(Resource):
                     query["user_id"] = ObjectId(user_id_query)
                 except:
                     return {"message": "Invalid user ID!"}, 400
+=======
+        # ?page=1&limit=10
+        try:
+            page = int(request.args.get("page", 1))
+            limit = int(request.args.get("limit", 10))
+        except ValueError:
+            page = 1
+            limit = 10
+
+        user_id_query = request.args.get("user_id")
+        query = {}
+        if is_admin and user_id_query:
+            try:
+                query["user_id"] = ObjectId(user_id_query)
+            except:
+                return {"message": "Invalid user ID!"}, 400
+        elif is_admin and not user_id_query:
+            pass
+>>>>>>> 712b086c5f7eda13cc581a40b41098a0e1ce5f16
         else:
             query["user_id"] = ObjectId(current_user_id)
 
-        rental_bills = db.rental_bills.find(query)
+        # Hitung Total Data & Total Unpaid
+        unpaid_pipeline = [
+            {"$match": {**query, "payment_status": "unpaid"}},
+            {"$group": {"_id": None, "total": {"$sum": "$total_price"}}},
+        ]
+        unpaid_result = list(db.rental_bills.aggregate(unpaid_pipeline))
+        total_unpaid = unpaid_result[0]["total"] if unpaid_result else 0
+
+        # Hitung jumlah dokumen buat pagination info
+        total_items = db.rental_bills.count_documents(query)
+        total_pages = (total_items + limit - 1) // limit
+
+        # Ambil Data Transaksi (Paginated & Sorted (yang terbaru harusnya di atas))
+        skip = (page - 1) * limit
+        rental_bills = (
+            db.rental_bills.find(query).sort("_id", -1).skip(skip).limit(limit)
+        )
+
         rental_list = [serialize_doc(rental) for rental in rental_bills]
-        return rental_list, 200
+
+        # Response Terstruktur
+        return {
+            "data": rental_list,
+            "meta": {
+                "page": page,
+                "limit": limit,
+                "total_items": total_items,
+                "total_pages": total_pages,
+                "total_unpaid": total_unpaid,
+            },
+        }, 200
 
 
 class RentalDetail(Resource):
@@ -105,25 +153,44 @@ class RentalPayment(Resource):
     @jwt_required()
     def post(self, rental_id):
         current_user_id = get_jwt_identity()
+        motor_id: str | None = None
+        user_id: str | None = None
+        payment_status: str | None = None
 
         try:
             rental_bill = db.rental_bills.find_one({"_id": ObjectId(rental_id)})
+
+            # Kalo rental bill valid, ambil motor id nya
+            motor_id = rental_bill and str(rental_bill.get("motor_id", None))
+            user_id = rental_bill and str(rental_bill.get("user_id", None))
+            payment_status = rental_bill and rental_bill.get("payment_status", None)
         except:
             return {"message": "Invalid rental ID!"}, 400
 
         if not rental_bill:
             return {"message": "Rental bill not found!"}, 404
 
-        if str(rental_bill["user_id"]) != current_user_id:
-            return {"message": "Unauthorized access, just pay your own bill bruh!"}, 401
+        if user_id != current_user_id:
+            return {"message": "Unauthorized access"}, 401
 
-        if rental_bill["payment_status"] == "paid":
-            return {"message": "Rental bill is already paid."}, 400
+        if payment_status == "paid":
+            return {"message": "Rental bill is already paid."}, 200
 
         db.rental_bills.update_one(
             {"_id": ObjectId(rental_id)},
             {"$set": {"payment_status": "paid",
                       "paid_at": datetime.now()}},
+        )
+
+        # Ubah lagi status motor nya jadi available
+        db.motor.update_one(
+            {"_id": ObjectId(motor_id)}, {"$set": {"status": "available"}}
+        )
+
+        # Ubah status transaksi motor nya jadi completed
+        db.rental_bills.update_one(
+            {"_id": ObjectId(rental_bill.get("_id", ""))},
+            {"$set": {"status": "completed"}},
         )
 
         return {"message": "Rental bill payment successful."}, 200
@@ -132,13 +199,57 @@ class RentalPayAll(Resource):
     @jwt_required()
     def post(self):
         current_user_id = get_jwt_identity()
-        result = db.rental_bills.update_many(
+
+        # Ambil semua motor id yang belum dibayar
+        list_motors = db.rental_bills.find(
             {"user_id": ObjectId(current_user_id), "payment_status": "unpaid"},
+<<<<<<< HEAD
             {"$set": {"payment_status": "paid", "paid_at": datetime.now()}}
         )
         if result.modified_count == 0:
             return {"message": "No unpaid rental bills found."}, 400
         return {"message": f"Successfully paid {result.modified_count} rental bills."}, 200
+=======
+            {"_id": 0, "motor_id": 1},
+        )
+        list_motors = [motor["motor_id"] for motor in list_motors]
+
+        try:
+            result = db.rental_bills.update_many(
+                {
+                    "user_id": ObjectId(current_user_id),
+                    "payment_status": "unpaid",
+                    "status": "ongoing",
+                },
+                {
+                    "$set": {
+                        "payment_status": "paid",
+                        "status": "completed",
+                        "paid_at": datetime.now(),
+                    }
+                },
+            )
+
+            # Update semua motor yang dibayar, ubah status nya jadi available
+            for motor_id in list_motors:
+                db.motor.update_one(
+                    {"_id": ObjectId(motor_id)}, {"$set": {"status": "available"}}
+                )
+
+            if result.modified_count == 0:
+                return {
+                    "status": "no_unpaid",
+                    "message": "No unpaid rental bills found.",
+                }, 200
+
+            return {
+                "status": "paid",
+                "message": f"Successfully paid {result.modified_count} rental bills.",
+            }, 200
+        except Exception as e:
+            print(f"Error occurred: {str(e)}")
+            return {"message": "Error occurred while processing the request."}, 500
+>>>>>>> 712b086c5f7eda13cc581a40b41098a0e1ce5f16
 
 
 rental_api.add_resource(RentalList, "/")
